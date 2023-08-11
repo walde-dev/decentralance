@@ -114,8 +114,8 @@ const PostJobModal = () => {
         </DialogHeader>
         <Alert variant={"destructive"}>
           <ExclamationTriangleIcon className="h-4 w-4" />
-          <AlertTitle>Heads up!</AlertTitle>
-          <AlertDescription>
+          <AlertTitle className="text-white">Heads up!</AlertTitle>
+          <AlertDescription className="text-white">
             You first need to register your account before you can post a job.
           </AlertDescription>
           <Button variant="outline" className="ml-6 mt-2 gap-x-1 text-white">
@@ -165,7 +165,7 @@ const PostJobModal = () => {
                 <FormItem>
                   <FormLabel>Project Budget</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input {...field} type="number" step={0.001}/>
                   </FormControl>
                   <FormDescription>in ETH</FormDescription>
                   <FormMessage />
@@ -173,7 +173,9 @@ const PostJobModal = () => {
               )}
             />
             <div className="flex w-full items-center justify-end">
-              <Button disabled type="submit">Post the Job</Button>
+              <Button disabled type="submit">
+                Post the Job
+              </Button>
             </div>
           </form>
         </Form>
