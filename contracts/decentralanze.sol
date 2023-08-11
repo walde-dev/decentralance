@@ -2,9 +2,19 @@
 pragma solidity ^0.8.0;
 
 contract FreelancePlatform {
+    address public owner;
+
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Only owner can call this function");
+        _;
+    }
+    constructor() {
+        owner = msg.sender;
+    }
+
     struct User {
         address userAddress;
-        string profileData;  // Could be IPFS hash for extended data
+        string profileData;  
         uint256 stakedAmount;
         bool isRegistered;
     }
@@ -43,7 +53,7 @@ contract FreelancePlatform {
 
     function postJob(string memory description, uint256 budget) external payable {
         require(msg.value == budget, "Sent ETH does not match the job budget");
-
+        
         jobs[jobIdCounter++] = Job({
             employer: payable(msg.sender),
             description: description,
