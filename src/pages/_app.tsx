@@ -6,7 +6,11 @@ import {
   w3mProvider,
 } from "@web3modal/ethereum";
 import { Web3Modal } from "@web3modal/react";
-import { configureChains, createConfig, WagmiConfig } from "wagmi";
+import {
+  configureChains,
+  createConfig,
+  WagmiConfig,
+} from "wagmi";
 import { arbitrum, mainnet, polygon } from "wagmi/chains";
 import "~/styles/globals.css";
 
