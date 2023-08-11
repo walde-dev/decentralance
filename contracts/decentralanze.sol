@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 contract FreelancePlatform {
     struct User {
         address userAddress;
-        string profileData;
+        string profileData;  // Could be IPFS hash for extended data
         uint256 stakedAmount;
         bool isRegistered;
     }
