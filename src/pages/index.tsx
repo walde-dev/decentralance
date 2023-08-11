@@ -1,10 +1,23 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
-import { ArrowRightIcon } from "@radix-ui/react-icons";
+import {
+  ArrowRightIcon,
+  ChevronDownIcon,
+  PlusCircledIcon,
+} from "@radix-ui/react-icons";
 import { useWeb3Modal } from "@web3modal/react";
+import { Plus } from "lucide-react";
 import Head from "next/head";
 import { useEffect } from "react";
 import { useAccount } from "wagmi";
 import { Button } from "~/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "~/components/ui/dialog";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -31,18 +44,47 @@ export default function Home() {
           <span className="text-4xl font-semibold text-gray-200">
             decentralance
           </span>
-
-          <Button
-            variant={address ? "outline" : "default"}
-            onClick={() => open()}
-          >
-            {address
-              ? address?.slice(0, 6) + "..." + address?.slice(-4) 
-              : "Login"}
-          </Button>
+          <div className="flex flex-row items-center justify-center gap-x-6">
+            <Button
+              variant={address ? "outline" : "default"}
+              onClick={() => open()}
+            >
+              {address ? (
+                <>
+                  <span>
+                    {address?.slice(0, 6) + "..." + address?.slice(-4)}
+                  </span>
+                  <ChevronDownIcon className="ml-2 h-5 w-5" />
+                </>
+              ) : (
+                "Login"
+              )}
+            </Button>
+            {!!address && <PostJobModal />}
+          </div>
         </div>
         <div className="flex h-full w-full flex-row items-center justify-center gap-x-4 pt-[350px] "></div>
       </main>
     </>
   );
 }
+
+const PostJobModal = () => {
+  return (
+    <Dialog>
+      <DialogTrigger>
+        <Button className="flex justify-center gap-x-2">
+          <Plus /> Post new Job
+        </Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Post a new job</DialogTitle>
+          <DialogDescription>
+            lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+          </DialogDescription>
+        </DialogHeader>
+      </DialogContent>
+    </Dialog>
+  );
+};
