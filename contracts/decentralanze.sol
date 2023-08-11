@@ -50,10 +50,11 @@ contract FreelancePlatform {
             isRegistered: true
         });
     }
-
+    //add tittle
     function postJob(string memory description, uint256 budget) external payable {
         require(msg.value == budget, "Sent ETH does not match the job budget");
-        
+        require(users[msg.sender].stakedAmount >= registrationStake, "User not enough staked");
+
         jobs[jobIdCounter++] = Job({
             employer: payable(msg.sender),
             description: description,
@@ -65,6 +66,7 @@ contract FreelancePlatform {
 
     function submitProposal(uint jobId, string memory proposalText) external {
         require(users[msg.sender].isRegistered, "User not registered");
+        require(users[msg.sender].stakedAmount >= registrationStake, "User not enough staked");
         require(jobs[jobId].isActive, "Job is not active or does not exist");
 
         jobProposals[jobId].push(Proposal({
@@ -105,7 +107,11 @@ contract FreelancePlatform {
 
         payable(msg.sender).transfer(amountToTransfer);
     }
-}
+    function slashStake(address userAddress, uint256 amount, address payable recipient) external onlyOwner {
+    require(users[userAddress].isRegistered, "User not registered");
+    require(users[userAddress].stakedAmount >= amount, "Amount to slash is more than user's staked amount");
 
-// add remove user
-// add slash staking
+    users[userAddress].stakedAmount -= amount;
+    recipient.transfer(amount);  
+    }
+}
