@@ -22,6 +22,7 @@ import { Separator } from "./ui/separator";
 import { useState } from "react";
 import { CheckedState } from "@radix-ui/react-checkbox";
 
+
 const mockJobs = [
   {
     title: "Frontend Developer for E-commerce Website",
@@ -217,8 +218,8 @@ const JobLists = () => {
             return true;
           })
           .map((job) => (
-            <li key={job.title} className="">
-              <Card>
+            <li key={job.title}>
+              <Card className="flex min-h-[350px] flex-col justify-between">
                 <CardHeader>
                   <CardTitle>{job.title}</CardTitle>
                   <CardDescription>{job.description}</CardDescription>
