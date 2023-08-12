@@ -33,7 +33,7 @@ const mockWorkers = [
   },
 ];
 
-const WorkerList = () => {
+const WorkerList = ({ isRegistered }: { isRegistered: boolean }) => {
   const [searchInput, setSearchInput] = useState("");
 
   return (
@@ -75,7 +75,7 @@ const WorkerList = () => {
                   </div>
                 </CardContent>
                 <CardFooter className="flex flex-row items-center justify-between">
-                  <Button className="gap-x-2">
+                  <Button disabled={!isRegistered} className="gap-x-2">
                     Contact <ArrowRight className="h-4 w-4" />
                   </Button>
                 </CardFooter>

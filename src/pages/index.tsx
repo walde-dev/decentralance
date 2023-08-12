@@ -10,7 +10,7 @@ import { useWeb3Modal } from "@web3modal/react";
 import { Plus } from "lucide-react";
 import Head from "next/head";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useAccount, useContractRead, useContractWrite } from "wagmi";
 import { prepareWriteContract, writeContract } from "@wagmi/core";
 
@@ -98,6 +98,10 @@ export default function Home() {
     args: [address],
   });
 
+  const isRegistered = useMemo(() => {
+    return !!dataC && !!address;
+  }, [dataC, address]);
+
   useEffect(() => {
     console.log("Welcome to stake!" + dataC?.toString());
   }, [dataC]);
@@ -163,7 +167,7 @@ export default function Home() {
         </div>
         <Separator className="my-8" />
         <div className="z-10 flex h-full w-full flex-col  justify-center gap-y-4 ">
-          {!!address && !dataC && (
+          {isRegistered && (
             <Alert variant={"destructive"}>
               <ExclamationTriangleIcon className="h-4 w-4" />
               <AlertTitle className="text-white">Heads up!</AlertTitle>
@@ -198,8 +202,12 @@ export default function Home() {
               </TabsList>
             </Tabs>
           </div>
-          {selectedView === "projects" && <JobLists />}
-          {selectedView === "workers" && <WorkerList />}
+          {selectedView === "projects" && (
+            <JobLists isRegistered={isRegistered} />
+          )}
+          {selectedView === "workers" && (
+            <WorkerList isRegistered={isRegistered} />
+          )}
         </div>
         <BgBubble className="-left-1/4 -top-[200px]" />
         <BgBubble className="-left-1/4 -top-1/3" />
@@ -347,7 +355,7 @@ const PostJobModal = () => {
   );
 };
 
-const RegisterModal = ({
+export const RegisterModal = ({
   className,
   onComplete,
 }: {

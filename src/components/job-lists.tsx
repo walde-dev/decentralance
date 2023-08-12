@@ -55,6 +55,7 @@ import {
   useContractInfiniteReads,
   useContractRead,
 } from "wagmi";
+import { RegisterModal } from "~/pages";
 
 // You can continue adding more job listings as needed.
 
@@ -65,7 +66,7 @@ const contractConfig = {
   chainId: NETID,
 };
 
-const JobLists = () => {
+const JobLists = ({ isRegistered }: { isRegistered: boolean }) => {
   const [searchInput, setSearchInput] = useState("");
   const [remoteOnly, setRemoteOnly] = useState<CheckedState>(false);
   const [showMine, setShowMine] = useState<CheckedState>(false);
@@ -218,7 +219,11 @@ const JobLists = () => {
                           selectedFreelancer={job.acceptedFreelancer}
                         />
                       ) : !!address ? (
-                        <ProposeModal job={job} />
+                        isRegistered ? (
+                          <ProposeModal job={job} />
+                        ) : (
+                          <RegisterModal />
+                        )
                       ) : (
                         <Button variant={"outline"}>Login to Propose</Button>
                       ))}
@@ -253,6 +258,7 @@ const ProposeModal = ({
     functionName: "submitProposal",
     chainId: NETID,
   });
+
   const formSchema = z.object({
     proposalText: z.string().min(2).max(500),
   });
