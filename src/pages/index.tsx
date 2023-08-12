@@ -200,7 +200,7 @@ export default function Home() {
               <RegisterModal className="mt-4" onComplete={refetchC} />
             </Alert>
           )}
-          <h1 className="text-3xl">
+          <h1 className="text-3xl font-semibold">
             {selectedView === "client"
               ? "Browse Freelancers"
               : "Browse Projects"}
