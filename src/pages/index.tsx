@@ -8,7 +8,7 @@ import { useWeb3Modal } from "@web3modal/react";
 import { Plus } from "lucide-react";
 import Head from "next/head";
 import { useEffect } from "react";
-import { useAccount } from "wagmi";
+import { useAccount, useContractRead } from "wagmi";
 import { Button } from "~/components/ui/button";
 import {
   Dialog,
@@ -26,11 +26,36 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "~/components/ui/navigation-menu";
+import { getUserAccountData } from "~/contractInteraction/user";
+import { CONTRACT_ABI, CONTRACT_ADDRESS, NETID } from "../STATIC";
+const wagmigotchiABI = CONTRACT_ABI;
 
 export default function Home() {
   const { open, close } = useWeb3Modal();
 
   const { address } = useAccount();
+  const { data, isError, isLoading } = useContractRead({
+    address: CONTRACT_ADDRESS,
+    abi: wagmigotchiABI,
+    chainId: NETID,
+    functionName: "owner",
+  });
+
+  const { data: dataC } = useContractRead({
+    address: CONTRACT_ADDRESS,
+    abi: wagmigotchiABI,
+    chainId: NETID,
+    functionName: "checkStakedAmount",
+    args: ["0x4a8A65e1F3592D44743389FD12Cc013B3c60E1C5"],
+  });
+
+  useEffect(() => {
+    console.log("Welcome to Decentralance!" + data?.toString(), isLoading);
+  }, [data, isLoading]);
+
+  useEffect(() => {
+    console.log("Welcome to stake!" + dataC?.toString());
+  }, [dataC]);
 
   return (
     <>
