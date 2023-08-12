@@ -456,8 +456,8 @@ const ProposalsModal = ({
           {!isLoading &&
             !isError &&
             !!data?.pages &&
-            data?.pages[0].map((proposalsL, index) => {
-              const listargs = proposalsL.result;
+            data?.pages?.[0]?.map((proposalsL, index) => {
+              const listargs = proposalsL.result as unknown[];
               if (!listargs) return null;
               const offer = {
                 user: listargs[0] as string,
@@ -542,10 +542,14 @@ const UserObject = ({ userAddress }: { userAddress: string }) => {
         <span>
           {" "}
           <a
-            href={"https://goerli.etherscan.io/address/" + data[0]}
+            //@ts-ignore
+            href={"https://goerli.etherscan.io/address/" + data?.[0]}
             target="_blank"
           >
-            {data[1]}
+            {
+              //@ts-ignore
+              data[1]
+            }
           </a>
         </span>
       )}
