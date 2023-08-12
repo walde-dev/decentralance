@@ -505,7 +505,7 @@ const ProposalsModal = () => {
           </DialogDescription>
         </DialogHeader>
         <Separator className="my-3" />
-        <ul className="flex max-h-[500px] flex-col items-center gap-y-4 overflow-y-scroll">
+        <ul className="flex max-h-[500px] flex-col items-center gap-y-4 overflow-y-scroll pr-4">
           {mockData.map((offer) => {
             return (
               <li key={offer.user} className="w-full">
