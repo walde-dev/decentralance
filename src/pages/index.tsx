@@ -73,6 +73,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
+import BgBubble from "~/components/bg-bubble";
 
 export default function Home() {
   const { open, close } = useWeb3Modal();
@@ -108,8 +109,8 @@ export default function Home() {
         <meta name="description" content="Decentralized Freelance Platform" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="flex min-h-screen flex-col items-center bg-[#050210] px-2 py-8 md:px-16 lg:px-64">
-        <div className="flex w-full flex-col items-center justify-between gap-y-4 md:flex-row md:gap-y-0">
+      <main className="relative flex min-h-screen flex-col items-center overflow-hidden bg-[#050210] px-2 py-8 md:px-16 lg:px-64">
+        <div className="z-10 flex w-full flex-col items-center justify-between gap-y-4 md:flex-row md:gap-y-0">
           <span className="text-4xl font-semibold text-gray-200">
             <span className="bg-gradient-to-r from-[#b429f9] to-[#26c5f3] bg-clip-text  text-transparent">
               decentral
@@ -117,7 +118,7 @@ export default function Home() {
             ance
           </span>
 
-          <div className="flex flex-col items-center justify-center gap-y-2 md:flex-row md:gap-x-2 md:gap-y-0">
+          <div className="z-10 flex flex-col items-center justify-center gap-y-2 md:flex-row md:gap-x-2 md:gap-y-0">
             {!!address && (
               <DropdownMenu>
                 <DropdownMenuTrigger>
@@ -153,7 +154,7 @@ export default function Home() {
           </div>
         </div>
         <Separator className="my-8" />
-        <div className="flex h-full w-full flex-col  justify-center gap-y-4 ">
+        <div className="z-10 flex h-full w-full flex-col  justify-center gap-y-4 ">
           {!!address && !dataC && (
             <Alert variant={"destructive"}>
               <ExclamationTriangleIcon className="h-4 w-4" />
@@ -165,7 +166,7 @@ export default function Home() {
               <RegisterModal className="mt-4" onComplete={refetchC} />
             </Alert>
           )}
-          <div className="flex flex-row items-center gap-x-4 mb-12">
+          <div className="mb-12 flex flex-row items-center gap-x-4">
             <h1 className="text-3xl font-semibold">Browse</h1>
             <Tabs
               defaultValue="projects"
@@ -192,6 +193,12 @@ export default function Home() {
           {selectedView === "projects" && <JobLists />}
           {selectedView === "workers" && <WorkerList />}
         </div>
+        <BgBubble className="-left-1/4 -top-[200px]" />
+        <BgBubble className="-left-1/4 -top-1/3" />
+        <BgBubble className="right-[200px] top-[100px]" />
+        <BgBubble className="left-10 top-[600px]" />
+        <BgBubble className="left-[200px] top-[600px]" />
+        <BgBubble className="bottom-10 right-10 rounded-s-sm" />
       </main>
     </>
   );
