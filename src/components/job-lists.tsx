@@ -19,9 +19,15 @@ import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Checkbox } from "./ui/checkbox";
 import { Separator } from "./ui/separator";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CheckedState } from "@radix-ui/react-checkbox";
-
+import { CONTRACT_ABI, CONTRACT_ADDRESS, NETID } from "~/STATIC";
+import {
+  paginatedIndexesConfig,
+  useAccount,
+  useContractInfiniteReads,
+  useContractRead,
+} from "wagmi";
 
 const mockJobs = [
   {
@@ -179,9 +185,35 @@ const mockJobs = [
 
 // You can continue adding more job listings as needed.
 
+const wagmigotchiABI = CONTRACT_ABI;
+const contractConfig = {
+  address: CONTRACT_ADDRESS,
+  abi: wagmigotchiABI,
+};
+
 const JobLists = () => {
   const [searchInput, setSearchInput] = useState("");
   const [remoteOnly, setRemoteOnly] = useState<CheckedState>(false);
+
+  const { address } = useAccount();
+  const { data, isLoading, fetchNextPage } = useContractInfiniteReads({
+    cacheKey: "contractJobs",
+    ...paginatedIndexesConfig(
+      (index) => {
+        return [
+          {
+            ...contractConfig,
+            functionName: "jobs",
+            args: [index] as const,
+          },
+        ];
+      },
+      { start: 0, perPage: 100, direction: "increment" }
+    ),
+  });
+  useEffect(() => {
+    console.log("JOBS", data);
+  }, [data]);
 
   return (
     <div className="flex flex-col gap-y-4">
@@ -203,53 +235,81 @@ const JobLists = () => {
         </div>
       </div>
       <ul className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-        {mockJobs
-          .filter((job) => {
-            return (
-              job.title.toLowerCase().includes(searchInput.toLowerCase()) ||
-              job.company.toLowerCase().includes(searchInput.toLowerCase()) ||
-              job.location.toLowerCase().includes(searchInput.toLowerCase())
-            );
-          })
-          .filter((job) => {
-            if (remoteOnly) {
-              return job.location.toLowerCase().includes("remote");
-            }
-            return true;
-          })
-          .map((job) => (
-            <li key={job.title}>
-              <Card className="flex min-h-[350px] flex-col justify-between">
-                <CardHeader>
-                  <CardTitle>{job.title}</CardTitle>
-                  <CardDescription>{job.description}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex flex-row items-center gap-x-2">
-                    <Building className="h-4 w-4" /> {job.company}
-                  </div>
-                  <div className="flex flex-row items-center gap-x-2">
-                    <SewingPinFilledIcon /> {job.location}
-                  </div>
+        {!isLoading &&
+          data?.pages[0]
+            ?.map((jobL) => {
+              const listargs = jobL.result;
+              const job = {
+                title: listargs[1] as string, //"Video Editor - YouTube Channel",
+                company: "ViralVision Media",
+                location: "Remote",
+                type: "Freelance",
+                budget: listargs[2] as number,
+                minimumRating: 4.2,
+                owner: listargs[0] as string,
+                description:
+                  "Edit engaging and creative videos for our YouTube channel. Proficiency in video editing software and storytelling skills are a must.",
+              };
+              return job;
+            })
+            .filter((job) => {
+              return (
+                job.title.toLowerCase().includes(searchInput.toLowerCase()) ||
+                job.company.toLowerCase().includes(searchInput.toLowerCase()) ||
+                job.location.toLowerCase().includes(searchInput.toLowerCase())
+              );
+            })
+            .filter((job) => {
+              if (remoteOnly) {
+                return job.location.toLowerCase().includes("remote");
+              }
+              return true;
+            })
+            .filter((job) => {
+              return job.budget > 0;
+            })
+            .map((job) => (
+              <li key={job.title}>
+                <Card className="flex min-h-[350px] flex-col justify-between">
+                  <CardHeader>
+                    <CardTitle>{job.title}</CardTitle>
+                    <CardDescription>{job.description}</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex flex-row items-center gap-x-2">
+                      <Building className="h-4 w-4" /> {job.company}
+                    </div>
+                    <div className="flex flex-row items-center gap-x-2">
+                      <SewingPinFilledIcon /> {job.location}
+                    </div>
 
-                  <div className="flex flex-row items-center gap-x-2">
-                    <StarFilledIcon /> min {job.minimumRating} rating
-                  </div>
-                  <div className="flex flex-row items-center gap-x-2">
-                    <Clock className="h-4 w-4" /> {job.type}
-                  </div>
-                </CardContent>
-                <CardFooter className="flex flex-row items-center justify-between">
-                  <div className="flex flex-row items-center gap-x-2">
-                    <Wallet className="h-4 w-4" /> {job.budget} ETH
-                  </div>
-                  <Button>
-                    Apply for this job <ArrowRight className="h-4 w-4" />
-                  </Button>
-                </CardFooter>
-              </Card>
-            </li>
-          ))}
+                    <div className="flex flex-row items-center gap-x-2">
+                      <StarFilledIcon /> min {job.minimumRating} rating
+                    </div>
+                    <div className="flex flex-row items-center gap-x-2">
+                      <Clock className="h-4 w-4" /> {job.type}
+                    </div>
+                  </CardContent>
+                  <CardFooter className="flex flex-row items-center justify-between">
+                    <div className="flex flex-row items-center gap-x-2">
+                      <Wallet className="h-4 w-4" />{" "}
+                      {(parseInt(job.budget) / 10 ** 18).toFixed(5)} ETH
+                    </div>
+                    {address === job.owner ? (
+                      <Button>
+                        Choose Proposal
+                        <ArrowRight className="h-4 w-4" />
+                      </Button>
+                    ) : (
+                      <Button>
+                        Apply for this job
+                        <ArrowRight className="h-4 w-4" />
+                      </Button>
+                    )}
+                  </CardFooter>
+                </Card>
+              </li>
+            ))}
       </ul>
     </div>
   );
