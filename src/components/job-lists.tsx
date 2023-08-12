@@ -185,7 +185,7 @@ const JobLists = ({ isRegistered }: { isRegistered: boolean }) => {
             })
             .map((job) => (
               <li key={job.title + "-" + job.owner + "-" + job.id}>
-                <Card className="flex min-h-[350px] flex-col justify-between">
+                <Card className="flex flex-col justify-between">
                   <CardHeader>
                     <CardTitle>{job.title}</CardTitle>
                     <CardDescription>{job.description}</CardDescription>

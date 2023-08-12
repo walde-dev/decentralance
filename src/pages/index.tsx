@@ -209,7 +209,7 @@ export default function Home() {
             </span>
             <div className="mt-8 flex md:flex-row items-center md:gap-x-6 md:gap-y-0 flex-col gap-y-6 md:max-w-lg">
               <Button
-                variant={"fancy"}
+                variant={"default"}
                 className="gap-x-2 text-xl w-full md:w-auto"
                 onClick={() => open()}
               >
