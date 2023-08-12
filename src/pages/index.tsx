@@ -8,7 +8,7 @@ import {
 import { useWeb3Modal } from "@web3modal/react";
 import { Plus } from "lucide-react";
 import Head from "next/head";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import { Alert, AlertDescription, AlertTitle } from "~/components/ui/alert";
 import { Button } from "~/components/ui/button";
@@ -34,12 +34,37 @@ import {
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
 import { Textarea } from "~/components/ui/textarea";
-import { Slider } from "~/components/ui/slider";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "~/components/ui/select";
+import JobLists from "~/components/job-lists";
+import { Separator } from "~/components/ui/separator";
 
 export default function Home() {
   const { open, close } = useWeb3Modal();
 
   const { address } = useAccount();
+
+  const [selectedView, setSelectedView] = useState<"worker" | "client">(
+    "worker"
+  );
+
+  function handleViewChange(value: "worker" | "client") {
+    setSelectedView(value);
+    window.localStorage.setItem("selectedView", value);
+  }
+
+  useEffect(() => {
+    if (window.localStorage.getItem("selectedView")) {
+      setSelectedView(
+        window.localStorage.getItem("selectedView") as "worker" | "client"
+      );
+    }
+  }, []);
 
   return (
     <>
@@ -53,7 +78,7 @@ export default function Home() {
           <span className="text-4xl font-semibold text-gray-200">
             decentralance
           </span>
-          <div className="flex flex-row items-center justify-center gap-x-6">
+          <div className="flex flex-row items-center justify-center gap-x-2">
             <Button
               variant={address ? "outline" : "default"}
               onClick={() => open()}
@@ -69,10 +94,36 @@ export default function Home() {
                 "Login"
               )}
             </Button>
+            <Select
+              onValueChange={(value: "worker" | "client") =>
+                handleViewChange(value)
+              }
+            >
+              <SelectTrigger className="w-[120px]">
+                <SelectValue
+                  placeholder={
+                    selectedView === "client" ? "Client" : "Freelancer"
+                  }
+                />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="worker">Freelancer</SelectItem>
+                <SelectItem value="client">Client</SelectItem>
+              </SelectContent>
+            </Select>
+
             {!!address && <PostJobModal />}
           </div>
         </div>
-        <div className="flex h-full w-full flex-row items-center justify-center gap-x-4 pt-[350px] "></div>
+        <Separator className="my-8" />
+        <div className="flex h-full w-full flex-col  justify-center gap-y-4 ">
+          <h1 className="text-3xl">
+            {selectedView === "client"
+              ? "Browse Freelancers"
+              : "Browse Projects"}
+          </h1>
+          <JobLists />
+        </div>
       </main>
     </>
   );
@@ -97,8 +148,6 @@ const PostJobModal = () => {
     // ✅ This will be type-safe and validated.
     console.log(values);
   }
-
-  const budget = form.watch("budget");
 
   return (
     <Dialog>
@@ -165,7 +214,7 @@ const PostJobModal = () => {
                 <FormItem>
                   <FormLabel>Project Budget</FormLabel>
                   <FormControl>
-                    <Input {...field} type="number" step={0.001}/>
+                    <Input {...field} type="number" step={0.001} />
                   </FormControl>
                   <FormDescription>in ETH</FormDescription>
                   <FormMessage />
