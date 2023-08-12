@@ -397,7 +397,9 @@ const RegisterModal = ({
   if (isSuccess) {
     button = (
       <div className="flex w-1/2 flex-col items-end justify-end">
-        <Button type="submit">Stake 0.01 ETH</Button>
+        <Button variant={"fancy"} type="submit">
+          Stake 0.01 ETH
+        </Button>
         <div className="ml-4">
           {" "}
           <a
