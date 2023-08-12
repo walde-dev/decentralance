@@ -61,6 +61,8 @@ import {
 import JobLists from "~/components/job-lists";
 import { Separator } from "~/components/ui/separator";
 import { Checkbox } from "~/components/ui/checkbox";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
+import { Label } from "~/components/ui/label";
 
 export default function Home() {
   const { open, close } = useWeb3Modal();
@@ -157,7 +159,9 @@ export default function Home() {
               </SelectContent>
             </Select>
 
-            {!!address && !!dataC && !loadingC && <PostJobModal />}
+            {!!address && !!dataC && !loadingC && selectedView === "client" && (
+              <PostJobModal />
+            )}
             {!!address && !dataC && !loadingC && <RegisterModal />}
           </div>
         </div>
@@ -168,7 +172,7 @@ export default function Home() {
               ? "Browse Freelancers"
               : "Browse Projects"}
           </h1>
-          <JobLists />
+          {selectedView === "worker" && <JobLists />}
         </div>
       </main>
     </>
@@ -355,16 +359,24 @@ const RegisterModal = () => {
 
   const formSchema = z.object({
     name: z.string().min(2).max(50),
-    description: z.string().min(2).max(500),
-    workType: z.object({
-      items: z.array(z.string()).refine((value) => value.some((item) => item), {
-        message: "You have to select at least one item.",
-      }),
-    }),
+    description: z.string().min(2).max(500).optional(),
+    workType: z
+      .object({
+        items: z
+          .array(z.string())
+          .refine((value) => value.some((item) => item), {
+            message: "You have to select at least one item.",
+          }),
+      })
+      .optional(),
+    type: z.enum(["client", "worker"]),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
+    defaultValues: {
+      type: "worker",
+    },
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
@@ -385,96 +397,145 @@ const RegisterModal = () => {
         <DialogHeader>
           <DialogTitle className="text-2xl">Welcome 👋 </DialogTitle>
           <DialogDescription>
-            In order to be able to apply for jobs, you need to stake some ETH
+            In order to be able to post or apply for jobs, you need to stake
+            some ETH
           </DialogDescription>
         </DialogHeader>
-
-        <Form {...form}>
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Your Name</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="description"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>About you</FormLabel>
-                <FormControl>
-                  <Textarea {...field} />
-                </FormControl>
-                <FormMessage />
-                <FormDescription>
-                  Tell us a bit about yourself and your skills
-                </FormDescription>
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="workType"
-            render={() => (
-              <FormItem>
-                <div className="mb-4">
-                  <FormLabel className="text-base">Your Skills</FormLabel>
-                  <FormDescription>
-                    Select the skills you want to be hired for
-                  </FormDescription>
-                </div>
-                {items.map((item) => (
-                  <FormField
-                    key={item.id}
-                    control={form.control}
-                    name="workType"
-                    render={({ field }) => {
-                      return (
-                        <FormItem
+        <Tabs
+          onValueChange={(value) =>
+            form.setValue("type", value as "worker" | "client")
+          }
+          defaultValue="worker"
+          className="w-full"
+        >
+          <Label className="mb-2">I am a</Label>
+          <TabsList className="w-full">
+            <TabsTrigger className="w-full" value="worker">
+              Freelancer
+            </TabsTrigger>
+            <TabsTrigger className="w-full" value="client">
+              Client
+            </TabsTrigger>
+          </TabsList>
+          <Separator className="my-4" />
+          <TabsContent value="worker">
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="mt-4 space-y-4"
+              >
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Your Name</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>About you</FormLabel>
+                      <FormControl>
+                        <Textarea {...field} />
+                      </FormControl>
+                      <FormMessage />
+                      <FormDescription>
+                        Tell us a bit about yourself
+                      </FormDescription>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="workType"
+                  render={() => (
+                    <FormItem>
+                      <div className="mb-4">
+                        <FormLabel className="text-base">Your Skills</FormLabel>
+                        <FormDescription>
+                          Select the skills you want to be hired for
+                        </FormDescription>
+                      </div>
+                      {items.map((item) => (
+                        <FormField
                           key={item.id}
-                          className="flex flex-row items-start space-x-3 space-y-0"
-                        >
-                          <FormControl>
-                            <Checkbox
-                              checked={field.value?.items.includes(item.id)}
-                              onCheckedChange={(checked) => {
-                                if (checked) {
-                                  field.onChange({
-                                    items: [
-                                      ...(field.value?.items ?? []),
-                                      item.id,
-                                    ],
-                                  });
-                                } else {
-                                  field.onChange({
-                                    items: field.value?.items.filter(
-                                      (i) => i !== item.id
-                                    ),
-                                  });
-                                }
-                              }}
-                            />
-                          </FormControl>
-                          <FormLabel className="text-sm font-normal">
-                            {item.label}
-                          </FormLabel>
-                        </FormItem>
-                      );
-                    }}
-                  />
-                ))}
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </Form>
+                          control={form.control}
+                          name="workType"
+                          render={({ field }) => {
+                            return (
+                              <FormItem
+                                key={item.id}
+                                className="flex flex-row items-start space-x-3 space-y-0"
+                              >
+                                <FormControl>
+                                  <Checkbox
+                                    checked={field.value?.items.includes(
+                                      item.id
+                                    )}
+                                    onCheckedChange={(checked) => {
+                                      if (checked) {
+                                        field.onChange({
+                                          items: [
+                                            ...(field.value?.items ?? []),
+                                            item.id,
+                                          ],
+                                        });
+                                      } else {
+                                        field.onChange({
+                                          items: field.value?.items.filter(
+                                            (i) => i !== item.id
+                                          ),
+                                        });
+                                      }
+                                    }}
+                                  />
+                                </FormControl>
+                                <FormLabel className="text-sm font-normal">
+                                  {item.label}
+                                </FormLabel>
+                              </FormItem>
+                            );
+                          }}
+                        />
+                      ))}
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </form>
+            </Form>
+          </TabsContent>
+          <TabsContent value="client">
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="mt-4 space-y-4"
+              >
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Your Name/Company Name</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </form>
+            </Form>
+          </TabsContent>
+        </Tabs>
         <Button>Stake 0.01 ETH</Button>
       </DialogContent>
     </Dialog>
