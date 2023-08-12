@@ -65,6 +65,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { Label } from "~/components/ui/label";
 import WorkerList from "~/components/worker-list";
 import { cn } from "~/lib/utils";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "~/components/ui/dropdown-menu";
 
 export default function Home() {
   const { open, close } = useWeb3Modal();
@@ -122,21 +130,30 @@ export default function Home() {
           </span>
 
           <div className="flex flex-row items-center justify-center gap-x-2">
-            <Button
-              variant={address ? "fancyOutline" : "default"}
-              onClick={() => open()}
-            >
-              {address ? (
-                <>
-                  <span>
-                    {address?.slice(0, 6) + "..." + address?.slice(-4)}
-                  </span>
-                  <ChevronDownIcon className="ml-2 h-5 w-5" />
-                </>
-              ) : (
-                "Login"
-              )}
-            </Button>
+            {!!address && (
+              <DropdownMenu>
+                <DropdownMenuTrigger>
+                  <Button variant="fancyOutline">
+                    <span>
+                      {address?.slice(0, 6) + "..." + address?.slice(-4)}
+                    </span>
+                    <ChevronDownIcon className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem>Inbox</DropdownMenuItem>
+                  <DropdownMenuItem>My Posted Jobs</DropdownMenuItem>
+                  <DropdownMenuItem>Settings</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
+            {!address && (
+              <Button variant={"default"} onClick={() => open()}>
+                Login
+              </Button>
+            )}
             <Select
               onValueChange={(value: "worker" | "client") =>
                 handleViewChange(value)
