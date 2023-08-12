@@ -4,6 +4,7 @@ import {
   ArrowRight,
   Building,
   CheckIcon,
+  Check,
   Clock,
   LocateIcon,
   NavigationIcon,
@@ -262,7 +263,7 @@ const JobLists = () => {
       <ul className="grid grid-cols-1 gap-4 xl:grid-cols-2">
         {!isLoading &&
           data?.pages[0]
-            ?.map((jobL) => {
+            ?.map((jobL, index) => {
               const listargs = jobL.result;
               const job = {
                 title: listargs[1] as string, //"Video Editor - YouTube Channel",
@@ -272,6 +273,7 @@ const JobLists = () => {
                 budget: listargs[2] as number,
                 minimumRating: 4.2,
                 owner: listargs[0] as string,
+                id: index,
                 description:
                   "Edit engaging and creative videos for our YouTube channel. Proficiency in video editing software and storytelling skills are a must.",
               };
@@ -346,14 +348,15 @@ const ProposeModal = ({
     minimumRating: number;
     type: string;
     location: string;
+    id: number;
     company: string;
   };
 }) => {
   const { data, error, isLoading, isSuccess, write } = useContractWrite({
-    // address: CONTRACT_ADDRESS,
-    // abi: wagmigotchiABI,
-    // functionName: "postJob",
-    // chainId: NETID,
+    address: CONTRACT_ADDRESS,
+    abi: wagmigotchiABI,
+    functionName: "submitProposal",
+    chainId: NETID,
   });
   const formSchema = z.object({
     proposalText: z.string().min(2).max(500),
@@ -367,8 +370,40 @@ const ProposeModal = ({
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
     console.log("submit", values);
+    write({
+      args: [job.id, values.proposalText],
+    });
   }
 
+  if (isSuccess) {
+    return (
+      <Dialog>
+        <DialogTrigger>
+          <Button>
+            Proposal Submitted <Check className="h-4 w-4" />
+          </Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="text-2xl">{job.title}</DialogTitle>
+          </DialogHeader>
+          <DialogDescription>
+            <div className="flex flex-col  items-center justify-center gap-y-4">
+              <div className="text-center text-6xl">🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀</div>
+              <span className="text-white">Success</span>
+              <a
+                href={`https://goerli.etherscan.io/tx/${data?.hash}`}
+                target="_blank"
+                className="text-pink-600 underline"
+              >
+                Transaction Successful
+              </a>
+            </div>
+          </DialogDescription>
+        </DialogContent>
+      </Dialog>
+    );
+  }
   return (
     <Dialog>
       <DialogTrigger>
@@ -423,7 +458,7 @@ const ProposeModal = ({
               type="submit"
               className="w-full"
             >
-              {isLoading ? "Staking... 🚀" : "Submit Proposal"}
+              {isLoading ? "Sending ... 🚀" : "Submit Proposal"}
             </Button>
             {!!error && <span className="text-red-500">{error?.name}</span>}
             {isSuccess && (
