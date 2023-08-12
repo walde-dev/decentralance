@@ -75,7 +75,7 @@ const WorkerList = () => {
                   </div>
                 </CardContent>
                 <CardFooter className="flex flex-row items-center justify-between">
-                  <Button>
+                  <Button className="gap-x-2">
                     Contact <ArrowRight className="h-4 w-4" />
                   </Button>
                 </CardFooter>

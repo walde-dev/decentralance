@@ -418,7 +418,7 @@ const RegisterModal = ({
   return (
     <Dialog>
       <DialogTrigger className={cn(className)}>
-        <Button variant="outline" className="gap-x-1 text-white">
+        <Button variant="outline" className="gap-x-2 text-white">
           <span className="">Register</span>
           <ArrowRightIcon className="h-4 w-4" />
         </Button>
