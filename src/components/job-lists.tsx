@@ -60,6 +60,11 @@ import { RegisterModal } from "~/pages";
 // You can continue adding more job listings as needed.
 
 const wagmigotchiABI = CONTRACT_ABI;
+const contractConfig = {
+  address: CONTRACT_ADDRESS,
+  abi: wagmigotchiABI,
+  chainId: NETID,
+};
 
 const JobLists = ({ isRegistered }: { isRegistered: boolean }) => {
   const [searchInput, setSearchInput] = useState("");
@@ -67,12 +72,7 @@ const JobLists = ({ isRegistered }: { isRegistered: boolean }) => {
   const [showMine, setShowMine] = useState<CheckedState>(false);
   const [pastOnes, setPastOnes] = useState<CheckedState>(false);
 
-  const { address } = useAccount();
-  const contractConfig = {
-    address: CONTRACT_ADDRESS,
-    abi: wagmigotchiABI,
-    chainId: NETID,
-  };
+  const { address, connector } = useAccount();
   const { data, isLoading, fetchNextPage } = useContractInfiniteReads({
     cacheKey: "contractJobs",
     ...paginatedIndexesConfig(
