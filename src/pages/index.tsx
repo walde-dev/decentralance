@@ -75,11 +75,15 @@ import {
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 import BgBubble from "~/components/bg-bubble";
+import Image from "next/image";
+import { Arrow } from "@radix-ui/react-select";
 
 export default function Home() {
   const { open, close } = useWeb3Modal();
 
   const { address } = useAccount();
+
+  const [showLanding, setShowLanding] = useState(!address);
 
   const [selectedView, setSelectedView] = useState<"projects" | "workers">(
     "projects"
@@ -124,12 +128,21 @@ export default function Home() {
       </Head>
       <main className="relative flex min-h-screen flex-col items-center overflow-hidden bg-[#050210] px-2 py-8 md:px-16 lg:px-64">
         <div className="z-10 flex w-full flex-col items-center justify-between gap-y-4 md:flex-row md:gap-y-0">
-          <span className="text-4xl font-semibold text-gray-200">
+          {/* <span className="text-4xl font-semibold text-gray-200">
             <span className="bg-gradient-to-r from-[#b429f9] to-[#26c5f3] bg-clip-text  text-transparent">
               decentral
             </span>
             ance
-          </span>
+          </span> */}
+
+          <Image
+            onClick={() => setShowLanding(!address)}
+            alt="logo"
+            className="hover:cursor-pointer"
+            src="/decent.png"
+            width={200}
+            height={200}
+          />
 
           <div className="z-10 flex flex-col items-center justify-center gap-y-2 md:flex-row md:gap-x-2 md:gap-y-0">
             {!!address && (
@@ -173,49 +186,82 @@ export default function Home() {
           </div>
         </div>
         <Separator className="my-8" />
-        <div className="z-10 flex h-full w-full flex-col  justify-center gap-y-4 ">
-          {!isRegistered && (
-            <Alert variant={"destructive"}>
-              <ExclamationTriangleIcon className="h-4 w-4" />
-              <AlertTitle className="text-white">Heads up!</AlertTitle>
-              <AlertDescription className="text-white">
-                You first need to register your account before you can apply for
-                or post a job.
-              </AlertDescription>
-              <RegisterModal className="mt-4" onComplete={refetchC} />
-            </Alert>
-          )}
-          <div className="mb-12 flex flex-row items-center justify-center gap-x-4 md:justify-start">
-            <h1 className="text-3xl font-semibold">Browse</h1>
-            <Tabs
-              defaultValue="projects"
-              onValueChange={(value) =>
-                setSelectedView(value as "projects" | "workers")
-              }
-            >
-              <TabsList className="py-6">
-                <TabsTrigger
-                  className="w-full text-xl font-semibold"
-                  value="projects"
-                >
-                  Projects
-                </TabsTrigger>
-                <TabsTrigger
-                  className="w-full text-xl font-semibold"
-                  value="workers"
-                >
-                  Freelancers
-                </TabsTrigger>
-              </TabsList>
-            </Tabs>
+        {showLanding ? (
+          <div className="z-10 mt-24 flex w-full  flex-col">
+            <h1 className=" text-5xl  font-bold md:max-w-lg">
+              <span className="text-[#26c5f3]">Decentralized</span> &{" "}
+              <span className="text-[#b429f9]">Trustworthy</span> Freelance
+              Services{" "}
+            </h1>
+            <span className="mt-8 text-xl text-gray-200 md:max-w-lg">
+              A decentralized freelance platform built on the Polygon Network to
+              provide a trustless and secure environment for freelancers and
+              clients to interact.
+              <br />
+            </span>
+            <div className="mt-8 flex flex-col justify-center gap-y-2 md:max-w-sm">
+              <Button
+                variant={"fancy"}
+                className="gap-x-2 text-xl"
+                onClick={() => open()}
+              >
+                Connect your Wallet
+              </Button>
+              <span className="text-center text-sm text-gray-200">or</span>
+              <Button
+                variant={"outline"}
+                className="gap-x-2 text-xl "
+                onClick={() => setShowLanding(false)}
+              >
+                Browse Jobs <ArrowRightIcon className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
-          {selectedView === "projects" && (
-            <JobLists isRegistered={isRegistered} />
-          )}
-          {selectedView === "workers" && (
-            <WorkerList isRegistered={isRegistered} />
-          )}
-        </div>
+        ) : (
+          <div className="z-10 flex h-full w-full flex-col  justify-center gap-y-4 ">
+            {!isRegistered && !!address && (
+              <Alert variant={"destructive"}>
+                <ExclamationTriangleIcon className="h-4 w-4" />
+                <AlertTitle className="text-white">Heads up!</AlertTitle>
+                <AlertDescription className="text-white">
+                  You first need to register your account before you can apply
+                  for or post a job.
+                </AlertDescription>
+                <RegisterModal className="mt-4" onComplete={refetchC} />
+              </Alert>
+            )}
+            <div className="mb-12 flex flex-row items-center justify-center gap-x-4 md:justify-start">
+              <h1 className="text-3xl font-semibold">Browse</h1>
+              <Tabs
+                defaultValue="projects"
+                onValueChange={(value) =>
+                  setSelectedView(value as "projects" | "workers")
+                }
+              >
+                <TabsList className="py-6">
+                  <TabsTrigger
+                    className="w-full text-xl font-semibold"
+                    value="projects"
+                  >
+                    Projects
+                  </TabsTrigger>
+                  <TabsTrigger
+                    className="w-full text-xl font-semibold"
+                    value="workers"
+                  >
+                    Freelancers
+                  </TabsTrigger>
+                </TabsList>
+              </Tabs>
+            </div>
+            {selectedView === "projects" && (
+              <JobLists isRegistered={isRegistered} />
+            )}
+            {selectedView === "workers" && (
+              <WorkerList isRegistered={isRegistered} />
+            )}
+          </div>
+        )}
         <BgBubble className="-left-1/4 -top-[200px]" />
         <BgBubble className="-left-1/4 -top-1/3" />
         <BgBubble className="right-[200px] top-[100px]" />
