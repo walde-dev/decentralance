@@ -187,7 +187,14 @@ export default function Home() {
         </div>
         <Separator className="my-8" />
         {showLanding ? (
-          <div className="z-10 mt-24 flex w-full  flex-col">
+          <div className="relative z-10 mt-24 flex w-full  flex-col">
+            <Image
+              alt="interview"
+              className="absolute right-0 -z-[1] opacity-70"
+              src="/interview.svg"
+              width={400}
+              height={400}
+            />
             <h1 className=" text-5xl  font-bold md:max-w-lg">
               <span className="text-[#26c5f3]">Decentralized</span> &{" "}
               <span className="text-[#b429f9]">Trustworthy</span> Freelance
