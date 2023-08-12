@@ -401,57 +401,6 @@ const RegisterModal = ({
     },
   });
 
-  let button = null;
-
-  if (isSuccess) {
-    button = (
-      <div className="flex w-1/2 flex-col items-end justify-end">
-        <Button variant={"fancy"} type="submit">
-          Stake 0.01 ETH
-        </Button>
-        <div className="ml-4">
-          {" "}
-          <a
-            href={`https://goerli.etherscan.io/tx/${data?.hash}`}
-            target="_blank"
-            className="text-pink-600 underline"
-          >
-            Transaction Successful
-          </a>
-        </div>
-      </div>
-    );
-  } else if (isLoading) {
-    button = (
-      <div className="flex w-1/2 flex-col items-end justify-end">
-        <Button type="submit" disabled>
-          Stake 0.01 ETH
-        </Button>
-
-        <div className="flex">
-          <div className="ml-4">Transaction in Progress...</div>
-        </div>
-      </div>
-    );
-  } else if (isError) {
-    button = (
-      <div className="flex w-1/2 flex-col items-end justify-end">
-        <Button type="submit">Stake 0.01 ETH</Button>
-
-        <div className="flex">
-          <div className="ml-4">{error?.name}</div>
-        </div>
-      </div>
-    );
-  } else {
-    button = (
-      <div className="flex w-1/2 flex-col items-end justify-end">
-        <Button type="submit">Stake 0.01 ETH</Button>
-        <div className="ml-4"> </div>
-      </div>
-    );
-  }
-
   function onSubmit(values: z.infer<typeof formSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
@@ -587,7 +536,24 @@ const RegisterModal = ({
                     </FormItem>
                   )}
                 />
-                {button}
+                <Button
+                  disabled={isLoading}
+                  variant="fancy"
+                  type="submit"
+                  className="w-full"
+                >
+                  {isLoading ? "Staking... 🚀" : "Stake 0.01 ETH"}
+                </Button>
+                {!!error && <span className="text-red-500">{error?.name}</span>}
+                {isSuccess && (
+                  <a
+                    href={`https://goerli.etherscan.io/tx/${data?.hash}`}
+                    target="_blank"
+                    className="text-pink-600 underline"
+                  >
+                    Transaction Successful
+                  </a>
+                )}
               </form>
             </Form>
           </TabsContent>
@@ -610,7 +576,24 @@ const RegisterModal = ({
                     </FormItem>
                   )}
                 />
-                {button}
+                <Button
+                  disabled={isLoading}
+                  variant="fancy"
+                  type="submit"
+                  className="w-full"
+                >
+                  {isLoading ? "Staking... 🚀" : "Stake 0.01 ETH"}
+                </Button>
+                {!!error && <span className="text-red-500">{error?.name}</span>}
+                {isSuccess && (
+                  <a
+                    href={`https://goerli.etherscan.io/tx/${data?.hash}`}
+                    target="_blank"
+                    className="text-pink-600 underline"
+                  >
+                    Transaction Successful
+                  </a>
+                )}
               </form>
             </Form>
           </TabsContent>
