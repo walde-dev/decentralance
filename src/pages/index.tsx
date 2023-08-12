@@ -114,12 +114,12 @@ export default function Home() {
       </Head>
       <main className="flex min-h-screen flex-col items-center bg-[#050210] px-64 py-8">
         <div className="flex w-full flex-row items-center justify-between">
-          <span className="text-4xl font-semibold text-gray-200">
+          <span className="text-transparent bg-gradient-to-r from-[#b429f9] to-[#26c5f3] bg-clip-text text-4xl font-semibold text-gray-200">
             decentralance
           </span>
           <div className="flex flex-row items-center justify-center gap-x-2">
             <Button
-              variant={address ? "outline" : "default"}
+              variant={address ? "fancyOutline" : "default"}
               onClick={() => open()}
             >
               {address ? (
@@ -276,14 +276,7 @@ const PostJobModal = () => {
           <DialogTitle className="text-2xl">Post a new job</DialogTitle>
           {/* <DialogDescription>Post a new job</DialogDescription> */}
         </DialogHeader>
-        <Alert variant={"destructive"}>
-          <ExclamationTriangleIcon className="h-4 w-4" />
-          <AlertTitle className="text-white">Heads up!</AlertTitle>
-          <AlertDescription className="text-white">
-            You first need to register your account before you can post a job.
-          </AlertDescription>
-          <RegisterModal />
-        </Alert>
+
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
