@@ -246,7 +246,7 @@ const JobLists = () => {
 
   return (
     <div className="flex flex-col gap-y-4">
-      <div className="flex md:flex-row flex-col gap-y-4 md:gap-y-0 items-center justify-between">
+      <div className="flex flex-col items-center justify-between gap-y-4 md:flex-row md:gap-y-0">
         <div className="w-full md:max-w-[300px]">
           <Input
             onChange={(e) => setSearchInput(e.target.value)}
@@ -345,7 +345,7 @@ const JobLists = () => {
                     </div>
                     {address === job.owner ? (
                       <ProposalsModal
-                        jobId={job.id}
+                        job={job}
                         selectedFreelancer={job.acceptedFreelancer}
                       />
                     ) : (
@@ -503,21 +503,30 @@ const ProposeModal = ({
 };
 
 const ProposalsModal = ({
-  jobId,
+  job,
   selectedFreelancer,
 }: {
-  jobId?: number;
+  job: {
+    title: string;
+    description: string;
+    budget: number;
+    minimumRating: number;
+    type: string;
+    location: string;
+    id: number;
+    company: string;
+  };
   selectedFreelancer: string;
 }) => {
   const { data, isLoading, isError, fetchNextPage } = useContractInfiniteReads({
-    cacheKey: "jobProposals" + jobId,
+    cacheKey: "jobProposals" + job.id,
     ...paginatedIndexesConfig(
       (index) => {
         return [
           {
             ...contractConfig,
             functionName: "jobProposals",
-            args: [jobId, index] as const,
+            args: [job.id, index] as const,
           },
         ];
       },
@@ -571,7 +580,7 @@ const ProposalsModal = ({
                 text: listargs[1] as string,
               };
               return (
-                <li key={offer.user + " " + jobId} className="w-full">
+                <li key={offer.user + " " + job.id} className="w-full">
                   <Card className="flex flex-col justify-between">
                     <CardHeader>
                       <CardTitle>
@@ -580,32 +589,38 @@ const ProposalsModal = ({
                       <CardDescription>{offer.text}</CardDescription>
                     </CardHeader>
                     <CardContent className="flex flex-row items-center justify-between"></CardContent>
-                    <CardFooter className="flex flex-row items-center justify-end">
+                    <CardFooter className="flex flex-row items-center justify-end gap-x-2">
+                      <Button
+                        className="w-full gap-x-2"
+                        onClick={() => {
+                          write({
+                            args: [job?.id, index],
+                          });
+                          setSelected(index);
+                        }}
+                        variant={!done ? "fancy" : "outline"}
+                        disabled={isLoadingW || done || !!selectedFreelancer}
+                      >
+                        {!isLoadingW && !selectedFreelancer && (
+                          <>
+                            <CheckIcon className="h-4 w-4" /> Accept
+                          </>
+                        )}
+                        {done && selectedFreelancer == offer.user && (
+                          <span className="text-green-500">Accepted 🚀</span>
+                        )}
+                        {done && selectedFreelancer != offer.user && (
+                          <span className="text-red-500">Rejected</span>
+                        )}
+                        {isLoadingW && !done && index == selected && (
+                          <span>🚀 Accepting... </span>
+                        )}
+                        {isLoadingW && !done && index != selected && (
+                          <span>Rejecting... </span>
+                        )}
+                      </Button>
                       {done && selectedFreelancer == offer.user && (
-                        <span className="text-green-500">Accepted 🚀</span>
-                      )}
-
-                      {done && selectedFreelancer != offer.user && (
-                        <span className="text-red-500">Rejected</span>
-                      )}
-                      {!isLoadingW && !done && (
-                        <Button
-                          className="gap-x-2"
-                          onClick={() => {
-                            write({
-                              args: [jobId, index],
-                            });
-                            setSelected(index);
-                          }}
-                        >
-                          <CheckIcon className="h-4 w-4" /> Accept
-                        </Button>
-                      )}
-                      {isLoadingW && !done && index == selected && (
-                        <span>Accepting ... 🚀</span>
-                      )}
-                      {isLoadingW && !done && index != selected && (
-                        <span>Rejecting ... </span>
+                        <Button>Payout</Button>
                       )}
                     </CardFooter>
                   </Card>
