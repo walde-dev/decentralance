@@ -221,6 +221,7 @@ const contractConfig = {
 const JobLists = () => {
   const [searchInput, setSearchInput] = useState("");
   const [remoteOnly, setRemoteOnly] = useState<CheckedState>(false);
+  const [showMine, setShowMine] = useState<CheckedState>(false);
 
   const { address } = useAccount();
   const { data, isLoading, fetchNextPage } = useContractInfiniteReads({
@@ -238,27 +239,39 @@ const JobLists = () => {
       { start: 0, perPage: 100, direction: "increment" }
     ),
   });
+
   useEffect(() => {
     console.log("JOBS", data);
   }, [data]);
 
   return (
     <div className="flex flex-col gap-y-4">
-      <div className="flex flex-row items-center justify-between">
-        <div className="w-full max-w-[300px]">
+      <div className="flex md:flex-row flex-col gap-y-4 md:gap-y-0 items-center justify-between">
+        <div className="w-full md:max-w-[300px]">
           <Input
             onChange={(e) => setSearchInput(e.target.value)}
             placeholder="Search jobs..."
           />
         </div>
-        <div className="flex flex-row items-center gap-x-2">
-          <Checkbox id="remote" onCheckedChange={(e) => setRemoteOnly(e)} />
-          <label
-            htmlFor="remote"
-            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-          >
-            Remote only
-          </label>
+        <div className="flex flex-row gap-x-4">
+          <div className="flex flex-row items-center gap-x-2">
+            <Checkbox id="ownJobs" onCheckedChange={(e) => setShowMine(e)} />
+            <label
+              htmlFor="ownJobs"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              Show my jobs
+            </label>
+          </div>
+          <div className="flex flex-row items-center gap-x-2">
+            <Checkbox id="remote" onCheckedChange={(e) => setRemoteOnly(e)} />
+            <label
+              htmlFor="remote"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              Remote only
+            </label>
+          </div>
         </div>
       </div>
       <ul className="grid grid-cols-1 gap-4 xl:grid-cols-2">
@@ -295,10 +308,16 @@ const JobLists = () => {
               return true;
             })
             .filter((job) => {
+              if (showMine) {
+                return job.owner === address;
+              }
+              return true;
+            })
+            .filter((job) => {
               return job.budget > 0;
             })
             .map((job) => (
-              <li key={job.title}>
+              <li key={job.title + "-" + job.owner}>
                 <Card className="flex min-h-[350px] flex-col justify-between">
                   <CardHeader>
                     <CardTitle>{job.title}</CardTitle>
@@ -413,7 +432,7 @@ const ProposeModal = ({
   return (
     <Dialog>
       <DialogTrigger>
-        <Button>
+        <Button className="gap-x-2">
           Submit Proposal <ArrowRight className="h-4 w-4" />
         </Button>
       </DialogTrigger>

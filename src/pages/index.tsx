@@ -120,8 +120,8 @@ export default function Home() {
         <meta name="description" content="Decentralized Freelance Platform" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="flex min-h-screen flex-col items-center bg-[#050210] px-16 py-8 lg:px-64">
-        <div className="flex w-full flex-row items-center justify-between">
+      <main className="flex min-h-screen flex-col items-center bg-[#050210] px-2 md:px-16 py-8 lg:px-64">
+        <div className="flex w-full md:flex-row flex-col gap-y-4 md:gap-y-0 items-center justify-between">
           <span className="text-4xl font-semibold text-gray-200">
             <span className="bg-gradient-to-r from-[#b429f9] to-[#26c5f3] bg-clip-text  text-transparent">
               decentral
@@ -129,23 +129,48 @@ export default function Home() {
             ance
           </span>
 
-          <div className="flex flex-row items-center justify-center gap-x-2">
+          <div className="flex md:flex-row items-center justify-center md:gap-x-2 md:gap-y-0 flex-col gap-y-2">
             {!!address && (
               <DropdownMenu>
                 <DropdownMenuTrigger>
-                  <Button variant="fancyOutline">
-                    <span>
+                  <Button variant="outline" className="gap-x-2">
+                    <span className="bg-gradient-to-r from-[#b429f9] to-[#26c5f3] bg-clip-text text-transparent">
                       {address?.slice(0, 6) + "..." + address?.slice(-4)}
                     </span>
                     <ChevronDownIcon className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
-                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                  <DropdownMenuLabel>General</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem>Inbox</DropdownMenuItem>
                   <DropdownMenuItem>My Posted Jobs</DropdownMenuItem>
                   <DropdownMenuItem>Settings</DropdownMenuItem>
+
+                  <DropdownMenuItem onClick={() => open()}>
+                    Open WalletConnect
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <div className="flex flex-col gap-y-2 px-2 pb-6  pt-2">
+                    <Label>View</Label>
+                    <Select
+                      onValueChange={(value: "worker" | "client") =>
+                        handleViewChange(value)
+                      }
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue
+                          placeholder={
+                            selectedView === "client" ? "Client" : "Freelancer"
+                          }
+                        />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="worker">Freelancer</SelectItem>
+                        <SelectItem value="client">Client</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </DropdownMenuContent>
               </DropdownMenu>
             )}
@@ -154,27 +179,11 @@ export default function Home() {
                 Login
               </Button>
             )}
-            <Select
-              onValueChange={(value: "worker" | "client") =>
-                handleViewChange(value)
-              }
-            >
-              <SelectTrigger className="w-[120px]">
-                <SelectValue
-                  placeholder={
-                    selectedView === "client" ? "Client" : "Freelancer"
-                  }
-                />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="worker">Freelancer</SelectItem>
-                <SelectItem value="client">Client</SelectItem>
-              </SelectContent>
-            </Select>
 
             {!!address && !!dataC && !loadingC && selectedView === "client" && (
               <PostJobModal />
             )}
+
             {!!address && !dataC && !loadingC && <RegisterModal className="" />}
           </div>
         </div>
@@ -191,7 +200,7 @@ export default function Home() {
               <RegisterModal className="mt-4" onComplete={refetchC} />
             </Alert>
           )}
-          <h1 className="text-3xl">
+          <h1 className="text-3xl font-semibold">
             {selectedView === "client"
               ? "Browse Freelancers"
               : "Browse Projects"}
@@ -409,7 +418,7 @@ const RegisterModal = ({
   return (
     <Dialog>
       <DialogTrigger className={cn(className)}>
-        <Button variant="outline" className="gap-x-1 text-white">
+        <Button variant="outline" className="gap-x-2 text-white">
           <span className="">Register</span>
           <ArrowRightIcon className="h-4 w-4" />
         </Button>
