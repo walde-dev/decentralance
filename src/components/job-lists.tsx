@@ -385,21 +385,20 @@ const ProposeModal = ({
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle className="text-2xl">{job.title}</DialogTitle>
+            <DialogTitle className="text-2xl">Proposal submitted! 🚀</DialogTitle>
+            <DialogDescription>
+              Your proposal has been submitted on-chain and can be accepted by
+              the client
+            </DialogDescription>
           </DialogHeader>
-          <DialogDescription>
-            <div className="flex flex-col  items-center justify-center gap-y-4">
-              <div className="text-center text-6xl">🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀</div>
-              <span className="text-white">Success</span>
-              <a
-                href={`https://goerli.etherscan.io/tx/${data?.hash}`}
-                target="_blank"
-                className="text-pink-600 underline"
-              >
-                Transaction Successful
-              </a>
-            </div>
-          </DialogDescription>
+          <Button variant={"link"}>
+            <a
+              href={`https://goerli.etherscan.io/tx/${data?.hash}`}
+              target="_blank"
+            >
+              View Transaction
+            </a>
+          </Button>
         </DialogContent>
       </Dialog>
     );

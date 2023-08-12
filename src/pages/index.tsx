@@ -246,45 +246,6 @@ const PostJobModal = () => {
     console.log("transaction", data, isLoading);
   }, [data, isLoading]);
 
-  const budget = form.watch("budget");
-  let button = null;
-  if (isSuccess) {
-    button = (
-      <div className="flex w-1/2 flex-col items-end justify-end">
-        <Button type="submit">Post the Job</Button>
-        <div className="ml-4">
-          {" "}
-          <a
-            href={`https://goerli.etherscan.io/tx/${data?.hash}`}
-            target="_blank"
-            className="text-pink-600 underline"
-          >
-            Transaction Successful
-          </a>
-        </div>
-      </div>
-    );
-  } else if (isLoading) {
-    button = (
-      <div className="flex w-1/2 flex-col items-end justify-end">
-        <Button type="submit" disabled>
-          Post the Job
-        </Button>
-
-        <div className="flex">
-          <div className="ml-4">Transaction in Progress...</div>
-        </div>
-      </div>
-    );
-  } else {
-    button = (
-      <div className="flex w-1/2 flex-col items-end justify-end">
-        <Button type="submit">Post the Job</Button>
-        <div className="ml-4"> </div>
-      </div>
-    );
-  }
-
   return (
     <Dialog>
       <DialogTrigger>
@@ -294,62 +255,81 @@ const PostJobModal = () => {
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="text-2xl">Post a new job</DialogTitle>
-          {/* <DialogDescription>Post a new job</DialogDescription> */}
+          <DialogTitle className="text-2xl">
+            {isSuccess ? "Job posted! " : "Post a new job"}
+          </DialogTitle>
+          {isSuccess && (
+            <DialogDescription>
+              Freelancers can now find your job posting and send proposals
+            </DialogDescription>
+          )}{" "}
         </DialogHeader>
 
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="mt-4 space-y-4"
-          >
-            <FormField
-              control={form.control}
-              name="title"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Project Title</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
+        {isSuccess ? (
+          <Button variant={"link"}>
+            <a
+              href={`https://goerli.etherscan.io/tx/${data?.hash}`}
+              target="_blank"
+            >
+              View Transaction
+            </a>
+          </Button>
+        ) : (
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="mt-4 space-y-4"
+            >
+              <FormField
+                control={form.control}
+                name="title"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Project Title</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
 
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Project Description</FormLabel>
-                  <FormControl>
-                    <Textarea {...field} />
-                  </FormControl>
-                  <FormDescription>
-                    Provide as much detail as possible
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="budget"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Project Budget</FormLabel>
-                  <FormControl>
-                    <Input {...field} type="number" step={0.001} />
-                  </FormControl>
-                  <FormDescription>in ETH</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <div className="flex w-full items-center justify-end">{button}</div>
-          </form>
-        </Form>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Project Description</FormLabel>
+                    <FormControl>
+                      <Textarea {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      Provide as much detail as possible
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="budget"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Project Budget</FormLabel>
+                    <FormControl>
+                      <Input {...field} type="number" step={0.001} />
+                    </FormControl>
+                    <FormDescription>in ETH</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <Button className="w-full" type="submit" disabled={isLoading}>
+                {isLoading ? "Transaction in Progress..." : "Post the Job"}
+              </Button>
+            </form>
+          </Form>
+        )}
       </DialogContent>
     </Dialog>
   );
