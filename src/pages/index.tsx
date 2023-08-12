@@ -64,6 +64,7 @@ import { Checkbox } from "~/components/ui/checkbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { Label } from "~/components/ui/label";
 import WorkerList from "~/components/worker-list";
+import { cn } from "~/lib/utils";
 
 export default function Home() {
   const { open, close } = useWeb3Modal();
@@ -153,7 +154,7 @@ export default function Home() {
             {!!address && !!dataC && !loadingC && selectedView === "client" && (
               <PostJobModal />
             )}
-            {!!address && !dataC && !loadingC && <RegisterModal />}
+            {!!address && !dataC && !loadingC && <RegisterModal className="" />}
           </div>
         </div>
         <Separator className="my-8" />
@@ -413,8 +414,8 @@ const RegisterModal = ({
 
   return (
     <Dialog>
-      <DialogTrigger>
-        <Button variant="outline" className=" mt-2 gap-x-1 text-white">
+      <DialogTrigger className={cn(className)}>
+        <Button variant="outline" className="gap-x-1 text-white">
           <span className="">Register</span>
           <ArrowRightIcon className="h-4 w-4" />
         </Button>
@@ -544,7 +545,16 @@ const RegisterModal = ({
                 >
                   {isLoading ? "Staking... 🚀" : "Stake 0.01 ETH"}
                 </Button>
-                {!!error && <span className="text-red-500">{error?.name}</span>}
+
+                {!!error && (
+                  <Alert variant={"destructive"}>
+                    <ExclamationTriangleIcon className="h-4 w-4" />
+                    <AlertTitle className="">Error</AlertTitle>
+                    <AlertDescription className="">
+                      {error?.name}
+                    </AlertDescription>
+                  </Alert>
+                )}
                 {isSuccess && (
                   <a
                     href={`https://goerli.etherscan.io/tx/${data?.hash}`}
