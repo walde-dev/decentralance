@@ -217,11 +217,40 @@ const PostJobModal = () => {
   const budget = form.watch("budget");
   let button = null;
   if (isSuccess) {
-    button = <div>success</div>;
+    button = (
+      <div className="flex w-1/2 flex-col items-end justify-end">
+        <Button type="submit">Post the Job</Button>
+        <div className="ml-4">
+          {" "}
+          <a
+            href={`https://goerli.etherscan.io/tx/${data?.hash}`}
+            target="_blank"
+            className="text-pink-600 underline"
+          >
+            Transaction Successful
+          </a>
+        </div>
+      </div>
+    );
   } else if (isLoading) {
-    button = <div>loading</div>;
+    button = (
+      <div className="flex w-1/2 flex-col items-end justify-end">
+        <Button type="submit" disabled>
+          Post the Job
+        </Button>
+
+        <div className="flex">
+          <div className="ml-4">Transaction in Progress...</div>
+        </div>
+      </div>
+    );
   } else {
-    button = <Button type="submit">Post the Job</Button>;
+    button = (
+      <div className="flex w-1/2 flex-col items-end justify-end">
+        <Button type="submit">Post the Job</Button>
+        <div className="ml-4"> </div>
+      </div>
+    );
   }
 
   return (
