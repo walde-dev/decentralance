@@ -568,7 +568,7 @@ const ProposalsModal = ({
           </DialogDescription>
         </DialogHeader>
         <Separator className="my-3" />
-        <ul className="flex max-h-[500px] flex-col items-center gap-y-4 overflow-y-scroll pr-4">
+        <ul className="flex max-h-[500px] flex-col items-center gap-y-4 overflow-y-scroll px-4">
           {!isLoading &&
             !isError &&
             !!data.pages &&
