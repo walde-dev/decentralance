@@ -74,12 +74,16 @@ export default function Home() {
     functionName: "owner",
   });
 
-  const { data: dataC } = useContractRead({
+  const {
+    data: dataC,
+    isLoading: loadingC,
+    isSuccess: successC,
+  } = useContractRead({
     address: CONTRACT_ADDRESS,
     abi: wagmigotchiABI,
     chainId: NETID,
     functionName: "checkStakedAmount",
-    args: ["0x4a8A65e1F3592D44743389FD12Cc013B3c60E1C5"],
+    args: [address],
   });
 
   useEffect(() => {
@@ -106,7 +110,7 @@ export default function Home() {
       );
     }
   }, []);
-
+  console.log("DATA", address, dataC, loadingC);
   return (
     <>
       <Head>
@@ -153,7 +157,8 @@ export default function Home() {
               </SelectContent>
             </Select>
 
-            {!!address && <PostJobModal />}
+            {!!address && !!dataC && !loadingC && <PostJobModal />}
+            {!!address && !dataC && !loadingC && <RegisterModal />}
           </div>
         </div>
         <Separator className="my-8" />
@@ -367,7 +372,6 @@ const RegisterModal = () => {
     // ✅ This will be type-safe and validated.
     console.log(values);
   }
-
 
   return (
     <Dialog>
