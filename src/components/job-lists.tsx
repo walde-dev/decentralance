@@ -374,7 +374,7 @@ const ProposeModal = ({
     <Dialog>
       <DialogTrigger>
         <Button>
-          Propose <ArrowRight className="h-4 w-4" />
+          Submit Proposal <ArrowRight className="h-4 w-4" />
         </Button>
       </DialogTrigger>
       <DialogContent>
@@ -424,7 +424,7 @@ const ProposeModal = ({
               type="submit"
               className="w-full"
             >
-              {isLoading ? "Staking... 🚀" : "Propose"}
+              {isLoading ? "Staking... 🚀" : "Submit Proposal"}
             </Button>
             {!!error && <span className="text-red-500">{error?.name}</span>}
             {isSuccess && (
