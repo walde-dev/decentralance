@@ -63,6 +63,7 @@ import { Separator } from "~/components/ui/separator";
 import { Checkbox } from "~/components/ui/checkbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { Label } from "~/components/ui/label";
+import WorkerList from "~/components/worker-list";
 
 export default function Home() {
   const { open, close } = useWeb3Modal();
@@ -81,10 +82,6 @@ export default function Home() {
     functionName: "checkStakedAmount",
     args: [address],
   });
-
-  useEffect(() => {
-    console.log("Welcome to Decentralance!" + data?.toString(), isLoading);
-  }, [data, isLoading]);
 
   useEffect(() => {
     console.log("Welcome to stake!" + dataC?.toString());
@@ -161,12 +158,24 @@ export default function Home() {
         </div>
         <Separator className="my-8" />
         <div className="flex h-full w-full flex-col  justify-center gap-y-4 ">
+          {!!address && !dataC && (
+            <Alert variant={"destructive"}>
+              <ExclamationTriangleIcon className="h-4 w-4" />
+              <AlertTitle className="text-white">Heads up!</AlertTitle>
+              <AlertDescription className="text-white">
+                You first need to register your account before you can apply for
+                or post a job.
+              </AlertDescription>
+              <RegisterModal className="mt-4" onComplete={refetchC} />
+            </Alert>
+          )}
           <h1 className="text-3xl">
             {selectedView === "client"
               ? "Browse Freelancers"
               : "Browse Projects"}
           </h1>
           {selectedView === "worker" && <JobLists />}
+          {selectedView === "client" && <WorkerList />}
         </div>
       </main>
     </>
@@ -336,7 +345,7 @@ const RegisterModal = ({
   onComplete,
 }: {
   className?: string;
-  onComplete: () => void;
+  onComplete?: () => void;
 }) => {
   const items = [
     {
