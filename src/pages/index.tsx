@@ -9,7 +9,9 @@ import { useWeb3Modal } from "@web3modal/react";
 import { Plus } from "lucide-react";
 import Head from "next/head";
 import { useEffect } from "react";
-import { useAccount, useContractRead } from "wagmi";
+import { useAccount, useContractRead, useContractWrite } from "wagmi";
+import { prepareWriteContract, writeContract } from "@wagmi/core";
+
 import { Alert, AlertDescription, AlertTitle } from "~/components/ui/alert";
 import { Button } from "~/components/ui/button";
 import {
@@ -33,7 +35,6 @@ import {
 } from "~/components/ui/navigation-menu";
 import { getUserAccountData } from "~/contractInteraction/user";
 import { CONTRACT_ABI, CONTRACT_ADDRESS, NETID } from "../STATIC";
-const wagmigotchiABI = CONTRACT_ABI;
 import {
   Form,
   FormControl,
@@ -46,6 +47,9 @@ import {
 import { Input } from "~/components/ui/input";
 import { Textarea } from "~/components/ui/textarea";
 import { Slider } from "~/components/ui/slider";
+import { parseEther } from "viem";
+
+const wagmigotchiABI = CONTRACT_ABI;
 
 export default function Home() {
   const { open, close } = useWeb3Modal();
@@ -117,6 +121,12 @@ const PostJobModal = () => {
     description: z.string().min(2).max(500),
     budget: z.number().min(0),
   });
+  const { data, isLoading, isSuccess, write } = useContractWrite({
+    address: CONTRACT_ADDRESS,
+    abi: wagmigotchiABI,
+    functionName: "postJob",
+    chainId: NETID,
+  });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -125,13 +135,37 @@ const PostJobModal = () => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-    console.log(values);
+    // const { request } = await prepareWriteContract({
+    //   address: CONTRACT_ADDRESS,
+    //   abi: wagmigotchiABI,
+    //   functionName: "postJob",
+    //   args: [values.description, values.budget],
+    // });
+    // const sendStatus = await writeContract(request);
+    write({
+      args: [values.description, parseEther(values.budget.toString())],
+      value: parseEther(values.budget.toString()),
+    });
+    // console.log(values, sendStatus);
+    console.log("sending");
   }
 
+  useEffect(() => {
+    console.log("transaction", data, isLoading);
+  }, [data, isLoading]);
+
   const budget = form.watch("budget");
+  let button = null;
+  if (isSuccess) {
+    button = <div>success</div>;
+  } else if (isLoading) {
+    button = <div>loading</div>;
+  } else {
+    button = <Button type="submit">Post the Job</Button>;
+  }
 
   return (
     <Dialog>
@@ -205,11 +239,7 @@ const PostJobModal = () => {
                 </FormItem>
               )}
             />
-            <div className="flex w-full items-center justify-end">
-              <Button disabled type="submit">
-                Post the Job
-              </Button>
-            </div>
+            <div className="flex w-full items-center justify-end">{button}</div>
           </form>
         </Form>
       </DialogContent>
