@@ -63,8 +63,6 @@ import { Separator } from "~/components/ui/separator";
 import { Checkbox } from "~/components/ui/checkbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { Label } from "~/components/ui/label";
-import { cn } from "~/lib/utils";
-import WorkerList from "~/components/worker-list";
 
 export default function Home() {
   const { open, close } = useWeb3Modal();
@@ -118,7 +116,7 @@ export default function Home() {
       </Head>
       <main className="flex min-h-screen flex-col items-center bg-[#050210] px-64 py-8">
         <div className="flex w-full flex-row items-center justify-between">
-          <span className="bg-gradient-to-tr from-[#b429f9] to-[#26c5f3] bg-clip-text text-4xl font-semibold text-gray-200 text-transparent">
+          <span className="text-4xl font-semibold text-gray-200">
             decentralance
           </span>
           <div className="flex flex-row items-center justify-center gap-x-2">
@@ -163,24 +161,12 @@ export default function Home() {
         </div>
         <Separator className="my-8" />
         <div className="flex h-full w-full flex-col  justify-center gap-y-4 ">
-          {!!address && !dataC && (
-            <Alert variant={"destructive"}>
-              <ExclamationTriangleIcon className="h-4 w-4" />
-              <AlertTitle className="text-white">Heads up!</AlertTitle>
-              <AlertDescription className="text-white">
-                You first need to register your account before you can apply for
-                or post a job.
-              </AlertDescription>
-              <RegisterModal className="mt-4" />
-            </Alert>
-          )}
           <h1 className="text-3xl">
             {selectedView === "client"
               ? "Browse Freelancers"
               : "Browse Projects"}
           </h1>
           {selectedView === "worker" && <JobLists />}
-          {selectedView === "client" && <WorkerList />}
         </div>
       </main>
     </>
@@ -280,7 +266,14 @@ const PostJobModal = () => {
           <DialogTitle className="text-2xl">Post a new job</DialogTitle>
           {/* <DialogDescription>Post a new job</DialogDescription> */}
         </DialogHeader>
-
+        <Alert variant={"destructive"}>
+          <ExclamationTriangleIcon className="h-4 w-4" />
+          <AlertTitle className="text-white">Heads up!</AlertTitle>
+          <AlertDescription className="text-white">
+            You first need to register your account before you can post a job.
+          </AlertDescription>
+          <RegisterModal />
+        </Alert>
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
@@ -338,7 +331,13 @@ const PostJobModal = () => {
   );
 };
 
-const RegisterModal = ({ className }: { className?: string }) => {
+const RegisterModal = ({
+  className,
+  onComplete,
+}: {
+  className?: string;
+  onComplete: () => void;
+}) => {
   const items = [
     {
       id: "frontend",
@@ -368,6 +367,7 @@ const RegisterModal = ({ className }: { className?: string }) => {
 
   useEffect(() => {
     if (isSuccess) {
+      onComplete();
     }
   }, [isSuccess]);
   const formSchema = z.object({
@@ -453,8 +453,8 @@ const RegisterModal = ({ className }: { className?: string }) => {
 
   return (
     <Dialog>
-      <DialogTrigger className={cn(className)}>
-        <Button variant="outline" className="gap-x-1 text-white">
+      <DialogTrigger>
+        <Button variant="outline" className=" mt-2 gap-x-1 text-white">
           <span className="">Register</span>
           <ArrowRightIcon className="h-4 w-4" />
         </Button>
