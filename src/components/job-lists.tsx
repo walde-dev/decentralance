@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
 import { SewingPinFilledIcon, StarFilledIcon } from "@radix-ui/react-icons";
 import {
   ArrowRight,
@@ -21,7 +22,28 @@ import { Checkbox } from "./ui/checkbox";
 import { Separator } from "./ui/separator";
 import { useState } from "react";
 import { CheckedState } from "@radix-ui/react-checkbox";
-
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "./ui/form";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Textarea } from "./ui/textarea";
+import { useContractWrite } from "wagmi";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "./ui/dialog";
+import { Label } from "./ui/label";
 
 const mockJobs = [
   {
@@ -243,9 +265,7 @@ const JobLists = () => {
                   <div className="flex flex-row items-center gap-x-2">
                     <Wallet className="h-4 w-4" /> {job.budget} ETH
                   </div>
-                  <Button>
-                    Apply for this job <ArrowRight className="h-4 w-4" />
-                  </Button>
+                  <ProposeModal job={job} />
                 </CardFooter>
               </Card>
             </li>
@@ -256,3 +276,109 @@ const JobLists = () => {
 };
 
 export default JobLists;
+
+const ProposeModal = ({
+  job,
+}: {
+  job: {
+    title: string;
+    description: string;
+    budget: number;
+    minimumRating: number;
+    type: string;
+    location: string;
+    company: string;
+  };
+}) => {
+  const { data, error, isLoading, isSuccess, write } = useContractWrite({
+    // address: CONTRACT_ADDRESS,
+    // abi: wagmigotchiABI,
+    // functionName: "postJob",
+    // chainId: NETID,
+  });
+  const formSchema = z.object({
+    proposalText: z.string().min(2).max(500),
+  });
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+  });
+
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    // Do something with the form values.
+    // ✅ This will be type-safe and validated.
+    console.log("submit", values);
+  }
+
+  return (
+    <Dialog>
+      <DialogTrigger>
+        <Button>
+          Propose <ArrowRight className="h-4 w-4" />
+        </Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle className="text-2xl">{job.title}</DialogTitle>
+          <DialogDescription>{job.description}</DialogDescription>
+
+          <div className="flex flex-row items-center gap-x-2">
+            <Building className="h-4 w-4" /> {job.company}
+          </div>
+          <div className="flex flex-row items-center gap-x-2">
+            <SewingPinFilledIcon /> {job.location}
+          </div>
+
+          <div className="flex flex-row items-center gap-x-2">
+            <StarFilledIcon /> min {job.minimumRating} rating
+          </div>
+          <div className="flex flex-row items-center gap-x-2">
+            <Clock className="h-4 w-4" /> {job.type}
+          </div>
+        </DialogHeader>
+
+        <Separator className="my-3" />
+
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="mt-4 space-y-4"
+          >
+            <FormField
+              control={form.control}
+              name="proposalText"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Your Proposal</FormLabel>
+                  <FormControl>
+                    <Textarea {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Label className="text-gray-400">Proposal Fee: 0.01 ETH</Label>
+            <Button
+              disabled={isLoading}
+              variant="fancy"
+              type="submit"
+              className="w-full"
+            >
+              {isLoading ? "Staking... 🚀" : "Propose"}
+            </Button>
+            {!!error && <span className="text-red-500">{error?.name}</span>}
+            {isSuccess && (
+              <a
+                href={`https://goerli.etherscan.io/tx/${data?.hash}`}
+                target="_blank"
+                className="text-pink-600 underline"
+              >
+                Transaction Successful
+              </a>
+            )}
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
+  );
+};
