@@ -217,8 +217,8 @@ const JobLists = () => {
             return true;
           })
           .map((job) => (
-            <li key={job.title} className="">
-              <Card>
+            <li key={job.title}>
+              <Card className="min-h-[350px] flex flex-col justify-between">
                 <CardHeader>
                   <CardTitle>{job.title}</CardTitle>
                   <CardDescription>{job.description}</CardDescription>
@@ -242,7 +242,7 @@ const JobLists = () => {
                   <div className="flex flex-row items-center gap-x-2">
                     <Wallet className="h-4 w-4" /> {job.budget} ETH
                   </div>
-                  <Button>
+                  <Button >
                     Apply for this job <ArrowRight className="h-4 w-4" />
                   </Button>
                 </CardFooter>
