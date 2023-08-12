@@ -55,6 +55,7 @@ import {
 } from "~/components/ui/select";
 import JobLists from "~/components/job-lists";
 import { Separator } from "~/components/ui/separator";
+import { Checkbox } from "~/components/ui/checkbox";
 
 export default function Home() {
   const { open, close } = useWeb3Modal();
@@ -202,10 +203,7 @@ const PostJobModal = () => {
           <AlertDescription className="text-white">
             You first need to register your account before you can post a job.
           </AlertDescription>
-          <Button variant="outline" className="ml-6 mt-2 gap-x-1 text-white">
-            <span className="">Register</span>
-            <ArrowRightIcon className="h-4 w-4" />
-          </Button>
+          <RegisterModal />
         </Alert>
         <Form {...form}>
           <form
@@ -263,6 +261,155 @@ const PostJobModal = () => {
             </div>
           </form>
         </Form>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+const RegisterModal = () => {
+  const items = [
+    {
+      id: "frontend",
+      label: "Frontend",
+    },
+    {
+      id: "backend",
+      label: "Backend",
+    },
+    {
+      id: "design",
+      label: "Design",
+    },
+    {
+      id: "marketing",
+      label: "Marketing",
+    },
+  ] as const;
+
+  const formSchema = z.object({
+    name: z.string().min(2).max(50),
+    description: z.string().min(2).max(500),
+    workType: z.object({
+      items: z.array(z.string()).refine((value) => value.some((item) => item), {
+        message: "You have to select at least one item.",
+      }),
+    }),
+  });
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+  });
+
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    // Do something with the form values.
+    // ✅ This will be type-safe and validated.
+    console.log(values);
+  }
+
+
+  return (
+    <Dialog>
+      <DialogTrigger>
+        <Button variant="outline" className=" mt-2 gap-x-1 text-white">
+          <span className="">Register</span>
+          <ArrowRightIcon className="h-4 w-4" />
+        </Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle className="text-2xl">Welcome 👋 </DialogTitle>
+          <DialogDescription>
+            In order to be able to apply for jobs, you need to stake some ETH
+          </DialogDescription>
+        </DialogHeader>
+
+        <Form {...form}>
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Your Name</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="description"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>About you</FormLabel>
+                <FormControl>
+                  <Textarea {...field} />
+                </FormControl>
+                <FormMessage />
+                <FormDescription>
+                  Tell us a bit about yourself and your skills
+                </FormDescription>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="workType"
+            render={() => (
+              <FormItem>
+                <div className="mb-4">
+                  <FormLabel className="text-base">Your Skills</FormLabel>
+                  <FormDescription>
+                    Select the skills you want to be hired for
+                  </FormDescription>
+                </div>
+                {items.map((item) => (
+                  <FormField
+                    key={item.id}
+                    control={form.control}
+                    name="workType"
+                    render={({ field }) => {
+                      return (
+                        <FormItem
+                          key={item.id}
+                          className="flex flex-row items-start space-x-3 space-y-0"
+                        >
+                          <FormControl>
+                            <Checkbox
+                              checked={field.value?.items.includes(item.id)}
+                              onCheckedChange={(checked) => {
+                                if (checked) {
+                                  field.onChange({
+                                    items: [
+                                      ...(field.value?.items ?? []),
+                                      item.id,
+                                    ],
+                                  });
+                                } else {
+                                  field.onChange({
+                                    items: field.value?.items.filter(
+                                      (i) => i !== item.id
+                                    ),
+                                  });
+                                }
+                              }}
+                            />
+                          </FormControl>
+                          <FormLabel className="text-sm font-normal">
+                            {item.label}
+                          </FormLabel>
+                        </FormItem>
+                      );
+                    }}
+                  />
+                ))}
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </Form>
+        <Button>Stake 0.01 ETH</Button>
       </DialogContent>
     </Dialog>
   );
