@@ -102,7 +102,7 @@ const JobLists = () => {
             placeholder="Search jobs..."
           />
         </div>
-        <div className="flex flex-row gap-x-4">
+        <div className="flex w-full flex-col items-start justify-center gap-y-2 px-2 md:flex-row md:justify-end md:gap-x-4 md:gap-y-0 md:px-0">
           <div className="flex flex-row items-center gap-x-2">
             <Checkbox id="ownJobs" onCheckedChange={(e) => setShowMine(e)} />
             <label
@@ -218,8 +218,10 @@ const JobLists = () => {
                           job={job}
                           selectedFreelancer={job.acceptedFreelancer}
                         />
-                      ) : (
+                      ) : !!address ? (
                         <ProposeModal job={job} />
+                      ) : (
+                        <Button variant={"outline"}>Login to Propose</Button>
                       ))}
                   </CardFooter>
                 </Card>
