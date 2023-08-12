@@ -215,6 +215,7 @@ const wagmigotchiABI = CONTRACT_ABI;
 const contractConfig = {
   address: CONTRACT_ADDRESS,
   abi: wagmigotchiABI,
+  chainId: NETID,
 };
 
 const JobLists = () => {
@@ -274,6 +275,7 @@ const JobLists = () => {
                 minimumRating: 4.2,
                 owner: listargs[0] as string,
                 id: index,
+                acceptedFreelancer: listargs[4] as string,
                 description:
                   "Edit engaging and creative videos for our YouTube channel. Proficiency in video editing software and storytelling skills are a must.",
               };
@@ -323,7 +325,10 @@ const JobLists = () => {
                       {(parseInt(job.budget) / 10 ** 18).toFixed(5)} ETH
                     </div>
                     {address === job.owner ? (
-                      <ProposalsModal />
+                      <ProposalsModal
+                        jobId={job.id}
+                        selectedFreelancer={job.acceptedFreelancer}
+                      />
                     ) : (
                       <ProposeModal job={job} />
                     )}
@@ -385,7 +390,9 @@ const ProposeModal = ({
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle className="text-2xl">Proposal submitted! 🚀</DialogTitle>
+            <DialogTitle className="text-2xl">
+              Proposal submitted! 🚀
+            </DialogTitle>
             <DialogDescription>
               Your proposal has been submitted on-chain and can be accepted by
               the client
@@ -476,22 +483,50 @@ const ProposeModal = ({
   );
 };
 
-const ProposalsModal = () => {
-  const mockData = [
-    {
-      text: "I will do it for 0.01 ETH",
-      user: "Terry",
-    },
-    {
-      text: "I will do it for 0.02 ETH",
-      user: "Terry2",
-    },
-    {
-      text: "Please let me do it Please let me do it Please let me do it Please let me do it Please let me do it Please let me do it Please let me do it Please let me do it Please let me do it Please let me do it Please let me do it ",
+const ProposalsModal = ({
+  jobId,
+  selectedFreelancer,
+}: {
+  jobId?: number;
+  selectedFreelancer: string;
+}) => {
+  const { data, isLoading, isError, fetchNextPage } = useContractInfiniteReads({
+    cacheKey: "jobProposals" + jobId,
+    ...paginatedIndexesConfig(
+      (index) => {
+        return [
+          {
+            ...contractConfig,
+            functionName: "jobProposals",
+            args: [jobId, index] as const,
+          },
+        ];
+      },
+      { start: 0, perPage: 100, direction: "increment" }
+    ),
+  });
+  const [selected, setSelected] = useState<number | null>(null);
+  const {
+    data: dataW,
+    error: error,
+    isLoading: isLoadingW,
+    isSuccess: isSuccessW,
+    write,
+  } = useContractWrite({
+    address: CONTRACT_ADDRESS,
+    abi: wagmigotchiABI,
+    functionName: "acceptProposal",
+    chainId: NETID,
+  });
 
-      user: "Terry3",
-    },
-  ];
+  useEffect(() => {
+    console.log("data", data);
+  }, [data]);
+
+  console.log("RENDER FR", data, selectedFreelancer);
+  const done =
+    selectedFreelancer &&
+    selectedFreelancer != "0x0000000000000000000000000000000000000000";
   return (
     <Dialog>
       <DialogTrigger>
@@ -506,26 +541,88 @@ const ProposalsModal = () => {
         </DialogHeader>
         <Separator className="my-3" />
         <ul className="flex max-h-[500px] flex-col items-center gap-y-4 overflow-y-scroll pr-4">
-          {mockData.map((offer) => {
-            return (
-              <li key={offer.user} className="w-full">
-                <Card className="flex flex-col justify-between">
-                  <CardHeader>
-                    <CardTitle>{offer.user}</CardTitle>
-                    <CardDescription>{offer.text}</CardDescription>
-                  </CardHeader>
-                  <CardContent className="flex flex-row items-center justify-between"></CardContent>
-                  <CardFooter className="flex flex-row items-center justify-end">
-                    <Button className="gap-x-2">
-                      <CheckIcon className="h-4 w-4" /> Accept
-                    </Button>
-                  </CardFooter>
-                </Card>
-              </li>
-            );
-          })}
+          {!isLoading &&
+            !isError &&
+            !!data.pages &&
+            data?.pages[0].map((proposalsL, index) => {
+              const listargs = proposalsL.result;
+              if (!listargs) return null;
+              const offer = {
+                user: listargs[0] as string,
+                text: listargs[1] as string,
+              };
+              return (
+                <li key={offer.user + " " + jobId} className="w-full">
+                  <Card className="flex flex-col justify-between">
+                    <CardHeader>
+                      <CardTitle>
+                        <UserObject userAddress={offer.user} />
+                      </CardTitle>
+                      <CardDescription>{offer.text}</CardDescription>
+                    </CardHeader>
+                    <CardContent className="flex flex-row items-center justify-between"></CardContent>
+                    <CardFooter className="flex flex-row items-center justify-end">
+                      {done && selectedFreelancer == offer.user && (
+                        <span className="text-green-500">Accepted 🚀</span>
+                      )}
+
+                      {done && selectedFreelancer != offer.user && (
+                        <span className="text-red-500">Rejected</span>
+                      )}
+                      {!isLoadingW && !done && (
+                        <Button
+                          className="gap-x-2"
+                          onClick={() => {
+                            write({
+                              args: [jobId, index],
+                            });
+                            setSelected(index);
+                          }}
+                        >
+                          <CheckIcon className="h-4 w-4" /> Accept
+                        </Button>
+                      )}
+                      {isLoadingW && !done && index == selected && (
+                        <span>Accepting ... 🚀</span>
+                      )}
+                      {isLoadingW && !done && index != selected && (
+                        <span>Rejecting ... </span>
+                      )}
+                    </CardFooter>
+                  </Card>
+                </li>
+              );
+            })}
         </ul>
       </DialogContent>
     </Dialog>
+  );
+};
+
+const UserObject = ({ userAddress }: { userAddress: string }) => {
+  const { data, isLoading, isSuccess, refetch } = useContractRead({
+    address: CONTRACT_ADDRESS,
+    abi: wagmigotchiABI,
+    chainId: NETID,
+    functionName: "users",
+    args: [userAddress],
+  });
+  console.log("user", data);
+
+  return (
+    <div>
+      {isLoading && <span>Loading ...</span>}
+      {isSuccess && (
+        <span>
+          {" "}
+          <a
+            href={"https://goerli.etherscan.io/address/" + data[0]}
+            target="_blank"
+          >
+            {data[1]}
+          </a>
+        </span>
+      )}
+    </div>
   );
 };
