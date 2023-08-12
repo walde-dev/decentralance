@@ -440,6 +440,7 @@ const ProposalsModal = ({
   const done =
     selectedFreelancer &&
     selectedFreelancer != "0x0000000000000000000000000000000000000000";
+  console.log("done", done, isLoadingW, done);
   return (
     <Dialog>
       <DialogTrigger>
@@ -484,9 +485,9 @@ const ProposalsModal = ({
                           setSelected(index);
                         }}
                         variant={!done ? "fancy" : "outline"}
-                        disabled={isLoadingW || done || !!selectedFreelancer}
+                        disabled={isLoadingW || done}
                       >
-                        {!isLoadingW && !selectedFreelancer && (
+                        {!isLoadingW && !done && (
                           <>
                             <CheckIcon className="h-4 w-4" /> Accept
                           </>
