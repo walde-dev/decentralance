@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import { SewingPinFilledIcon, StarFilledIcon } from "@radix-ui/react-icons";
 import {
@@ -74,6 +75,7 @@ const JobLists = () => {
   const { data, isLoading, fetchNextPage } = useContractInfiniteReads({
     cacheKey: "contractJobs",
     ...paginatedIndexesConfig(
+      // @ts-ignore
       (index) => {
         return [
           {
@@ -134,7 +136,7 @@ const JobLists = () => {
         {!isLoading &&
           data?.pages[0]
             ?.map((jobL, index) => {
-              const listargs = jobL.result;
+              const listargs = jobL.result as unknown[];
               const job = {
                 title: listargs[1] as string, //"Video Editor - YouTube Channel",
                 company: "ViralVision Media",
@@ -206,7 +208,8 @@ const JobLists = () => {
                   <CardFooter className="flex flex-row items-center justify-between">
                     <div className="flex flex-row items-center gap-x-2">
                       <Wallet className="h-4 w-4" />{" "}
-                      {(parseInt(job.budget) / 10 ** 18).toFixed(5)} ETH
+                      {(parseInt(job.budget.toString()) / 10 ** 18).toFixed(5)}{" "}
+                      ETH
                     </div>
                     {job.isActive == false && <div>🚀 Completed 🚀</div>}
                     {job.isActive &&
@@ -388,6 +391,7 @@ const ProposalsModal = ({
   const { data, isLoading, isError, fetchNextPage } = useContractInfiniteReads({
     cacheKey: "jobProposals" + job.id,
     ...paginatedIndexesConfig(
+      // @ts-ignore
       (index) => {
         return [
           {
@@ -451,7 +455,7 @@ const ProposalsModal = ({
         <ul className="flex max-h-[500px] flex-col items-center gap-y-4 overflow-y-scroll px-4">
           {!isLoading &&
             !isError &&
-            !!data.pages &&
+            !!data?.pages &&
             data?.pages[0].map((proposalsL, index) => {
               const listargs = proposalsL.result;
               if (!listargs) return null;

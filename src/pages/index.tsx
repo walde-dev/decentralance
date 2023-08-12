@@ -165,7 +165,7 @@ export default function Home() {
               <RegisterModal className="mt-4" onComplete={refetchC} />
             </Alert>
           )}
-          <div className="flex flex-row items-center gap-x-4 mb-12">
+          <div className="mb-12 flex flex-row items-center gap-x-4">
             <h1 className="text-3xl font-semibold">Browse</h1>
             <Tabs
               defaultValue="projects"
@@ -217,7 +217,7 @@ const PostJobModal = () => {
     },
   });
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  function onSubmit(values: z.infer<typeof formSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
     // const { request } = await prepareWriteContract({
@@ -364,7 +364,7 @@ const RegisterModal = ({
 
   useEffect(() => {
     if (isSuccess) {
-      onComplete();
+      onComplete?.();
     }
   }, [isSuccess]);
   const formSchema = z.object({
