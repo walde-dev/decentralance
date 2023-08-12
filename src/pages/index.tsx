@@ -133,19 +133,23 @@ export default function Home() {
             {!!address && (
               <DropdownMenu>
                 <DropdownMenuTrigger>
-                  <Button variant="outline">
-                    <span>
+                  <Button variant="outline" className="gap-x-2">
+                    <span className="bg-gradient-to-r from-[#b429f9] to-[#26c5f3] bg-clip-text text-transparent">
                       {address?.slice(0, 6) + "..." + address?.slice(-4)}
                     </span>
                     <ChevronDownIcon className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
-                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                  <DropdownMenuLabel>General</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem>Inbox</DropdownMenuItem>
                   <DropdownMenuItem>My Posted Jobs</DropdownMenuItem>
                   <DropdownMenuItem>Settings</DropdownMenuItem>
+
+                  <DropdownMenuItem onClick={() => open()}>
+                    Open WalletConnect
+                  </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <div className="flex flex-col gap-y-2 px-2 pb-6  pt-2">
                     <Label>View</Label>
@@ -154,7 +158,7 @@ export default function Home() {
                         handleViewChange(value)
                       }
                     >
-                      <SelectTrigger className="w-[120px]">
+                      <SelectTrigger className="w-full">
                         <SelectValue
                           placeholder={
                             selectedView === "client" ? "Client" : "Freelancer"
@@ -179,7 +183,7 @@ export default function Home() {
             {!!address && !!dataC && !loadingC && selectedView === "client" && (
               <PostJobModal />
             )}
-            
+
             {!!address && !dataC && !loadingC && <RegisterModal className="" />}
           </div>
         </div>
