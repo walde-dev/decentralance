@@ -2,6 +2,7 @@
 import {
   ArrowRightIcon,
   ChevronDownIcon,
+  ExclamationTriangleIcon,
   PlusCircledIcon,
 } from "@radix-ui/react-icons";
 import { useWeb3Modal } from "@web3modal/react";
@@ -9,6 +10,7 @@ import { Plus } from "lucide-react";
 import Head from "next/head";
 import { useEffect } from "react";
 import { useAccount, useContractRead } from "wagmi";
+import { Alert, AlertDescription, AlertTitle } from "~/components/ui/alert";
 import { Button } from "~/components/ui/button";
 import {
   Dialog,
@@ -18,6 +20,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "~/components/ui/dialog";
+import * as z from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -29,6 +34,18 @@ import {
 import { getUserAccountData } from "~/contractInteraction/user";
 import { CONTRACT_ABI, CONTRACT_ADDRESS, NETID } from "../STATIC";
 const wagmigotchiABI = CONTRACT_ABI;
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "~/components/ui/form";
+import { Input } from "~/components/ui/input";
+import { Textarea } from "~/components/ui/textarea";
+import { Slider } from "~/components/ui/slider";
 
 export default function Home() {
   const { open, close } = useWeb3Modal();
@@ -95,6 +112,27 @@ export default function Home() {
 }
 
 const PostJobModal = () => {
+  const formSchema = z.object({
+    title: z.string().min(2).max(50),
+    description: z.string().min(2).max(500),
+    budget: z.number().min(0),
+  });
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      budget: 0.001,
+    },
+  });
+
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    // Do something with the form values.
+    // ✅ This will be type-safe and validated.
+    console.log(values);
+  }
+
+  const budget = form.watch("budget");
+
   return (
     <Dialog>
       <DialogTrigger>
@@ -104,11 +142,76 @@ const PostJobModal = () => {
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Post a new job</DialogTitle>
-          <DialogDescription>
-            lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          </DialogDescription>
+          <DialogTitle className="text-2xl">Post a new job</DialogTitle>
+          {/* <DialogDescription>Post a new job</DialogDescription> */}
         </DialogHeader>
+        <Alert variant={"destructive"}>
+          <ExclamationTriangleIcon className="h-4 w-4" />
+          <AlertTitle className="text-white">Heads up!</AlertTitle>
+          <AlertDescription className="text-white">
+            You first need to register your account before you can post a job.
+          </AlertDescription>
+          <Button variant="outline" className="ml-6 mt-2 gap-x-1 text-white">
+            <span className="">Register</span>
+            <ArrowRightIcon className="h-4 w-4" />
+          </Button>
+        </Alert>
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="mt-4 space-y-4"
+          >
+            <FormField
+              control={form.control}
+              name="title"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Project Title</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Project Description</FormLabel>
+                  <FormControl>
+                    <Textarea {...field} />
+                  </FormControl>
+                  <FormDescription>
+                    Provide as much detail as possible
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="budget"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Project Budget</FormLabel>
+                  <FormControl>
+                    <Input {...field} type="number" step={0.001} />
+                  </FormControl>
+                  <FormDescription>in ETH</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <div className="flex w-full items-center justify-end">
+              <Button disabled type="submit">
+                Post the Job
+              </Button>
+            </div>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );
