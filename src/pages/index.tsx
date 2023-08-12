@@ -133,7 +133,7 @@ export default function Home() {
             {!!address && (
               <DropdownMenu>
                 <DropdownMenuTrigger>
-                  <Button variant="fancyOutline">
+                  <Button variant="outline">
                     <span>
                       {address?.slice(0, 6) + "..." + address?.slice(-4)}
                     </span>
@@ -146,6 +146,27 @@ export default function Home() {
                   <DropdownMenuItem>Inbox</DropdownMenuItem>
                   <DropdownMenuItem>My Posted Jobs</DropdownMenuItem>
                   <DropdownMenuItem>Settings</DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <div className="flex flex-col gap-y-2 px-2 pb-6  pt-2">
+                    <Label>View</Label>
+                    <Select
+                      onValueChange={(value: "worker" | "client") =>
+                        handleViewChange(value)
+                      }
+                    >
+                      <SelectTrigger className="w-[120px]">
+                        <SelectValue
+                          placeholder={
+                            selectedView === "client" ? "Client" : "Freelancer"
+                          }
+                        />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="worker">Freelancer</SelectItem>
+                        <SelectItem value="client">Client</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </DropdownMenuContent>
               </DropdownMenu>
             )}
@@ -154,27 +175,11 @@ export default function Home() {
                 Login
               </Button>
             )}
-            <Select
-              onValueChange={(value: "worker" | "client") =>
-                handleViewChange(value)
-              }
-            >
-              <SelectTrigger className="w-[120px]">
-                <SelectValue
-                  placeholder={
-                    selectedView === "client" ? "Client" : "Freelancer"
-                  }
-                />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="worker">Freelancer</SelectItem>
-                <SelectItem value="client">Client</SelectItem>
-              </SelectContent>
-            </Select>
 
             {!!address && !!dataC && !loadingC && selectedView === "client" && (
               <PostJobModal />
             )}
+            
             {!!address && !dataC && !loadingC && <RegisterModal className="" />}
           </div>
         </div>
