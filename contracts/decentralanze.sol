@@ -14,6 +14,7 @@ contract FreelancePlatform {
 
     struct User {
         address userAddress;
+        bool isClient;
         string profileData;  
         uint256 stakedAmount;
         bool isRegistered;
@@ -39,12 +40,13 @@ contract FreelancePlatform {
     uint256 public registrationStake = 10 gwei; 
     uint256 public jobIdCounter = 0;
 
-    function register(string memory profileData) external payable {
+    function register(string memory profileData, bool isClient) external payable {
         require(!users[msg.sender].isRegistered, "User already registered");
         require(msg.value == registrationStake, "Incorrect stake amount");
 
         users[msg.sender] = User({
             userAddress: msg.sender,
+            isClient: isClient,
             profileData: profileData,
             stakedAmount: msg.value,
             isRegistered: true
