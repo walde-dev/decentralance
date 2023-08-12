@@ -166,7 +166,7 @@ export default function Home() {
               <RegisterModal className="mt-4" onComplete={refetchC} />
             </Alert>
           )}
-          <div className="mb-12 flex flex-row items-center gap-x-4">
+          <div className="mb-12 flex flex-row justify-center md:justify-start items-center gap-x-4">
             <h1 className="text-3xl font-semibold">Browse</h1>
             <Tabs
               defaultValue="projects"

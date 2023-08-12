@@ -102,7 +102,7 @@ const JobLists = () => {
             placeholder="Search jobs..."
           />
         </div>
-        <div className="flex flex-row gap-x-4">
+        <div className="px-2 md:px-0 flex w-full flex-col items-start justify-center gap-y-2 md:flex-row md:justify-end md:gap-x-4 md:gap-y-0">
           <div className="flex flex-row items-center gap-x-2">
             <Checkbox id="ownJobs" onCheckedChange={(e) => setShowMine(e)} />
             <label
