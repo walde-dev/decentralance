@@ -79,6 +79,10 @@ export default function Home() {
 
   const { address } = useAccount();
 
+  const [selectedView, setSelectedView] = useState<"projects" | "workers">(
+    "projects"
+  );
+
   const {
     data: dataC,
     isLoading: loadingC,
@@ -96,22 +100,6 @@ export default function Home() {
     console.log("Welcome to stake!" + dataC?.toString());
   }, [dataC]);
 
-  const [selectedView, setSelectedView] = useState<"worker" | "client">(
-    "worker"
-  );
-
-  function handleViewChange(value: "worker" | "client") {
-    setSelectedView(value);
-    window.localStorage.setItem("selectedView", value);
-  }
-
-  useEffect(() => {
-    if (window.localStorage.getItem("selectedView")) {
-      setSelectedView(
-        window.localStorage.getItem("selectedView") as "worker" | "client"
-      );
-    }
-  }, []);
   console.log("DATA", address, dataC, loadingC);
   return (
     <>
@@ -120,8 +108,8 @@ export default function Home() {
         <meta name="description" content="Decentralized Freelance Platform" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="flex min-h-screen flex-col items-center bg-[#050210] px-2 md:px-16 py-8 lg:px-64">
-        <div className="flex w-full md:flex-row flex-col gap-y-4 md:gap-y-0 items-center justify-between">
+      <main className="flex min-h-screen flex-col items-center bg-[#050210] px-2 py-8 md:px-16 lg:px-64">
+        <div className="flex w-full flex-col items-center justify-between gap-y-4 md:flex-row md:gap-y-0">
           <span className="text-4xl font-semibold text-gray-200">
             <span className="bg-gradient-to-r from-[#b429f9] to-[#26c5f3] bg-clip-text  text-transparent">
               decentral
@@ -129,7 +117,7 @@ export default function Home() {
             ance
           </span>
 
-          <div className="flex md:flex-row items-center justify-center md:gap-x-2 md:gap-y-0 flex-col gap-y-2">
+          <div className="flex flex-col items-center justify-center gap-y-2 md:flex-row md:gap-x-2 md:gap-y-0">
             {!!address && (
               <DropdownMenu>
                 <DropdownMenuTrigger>
@@ -150,27 +138,6 @@ export default function Home() {
                   <DropdownMenuItem onClick={() => open()}>
                     Open WalletConnect
                   </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <div className="flex flex-col gap-y-2 px-2 pb-6  pt-2">
-                    <Label>View</Label>
-                    <Select
-                      onValueChange={(value: "worker" | "client") =>
-                        handleViewChange(value)
-                      }
-                    >
-                      <SelectTrigger className="w-full">
-                        <SelectValue
-                          placeholder={
-                            selectedView === "client" ? "Client" : "Freelancer"
-                          }
-                        />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="worker">Freelancer</SelectItem>
-                        <SelectItem value="client">Client</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
                 </DropdownMenuContent>
               </DropdownMenu>
             )}
@@ -180,9 +147,7 @@ export default function Home() {
               </Button>
             )}
 
-            {!!address && !!dataC && !loadingC && selectedView === "client" && (
-              <PostJobModal />
-            )}
+            {!!address && !!dataC && !loadingC && <PostJobModal />}
 
             {!!address && !dataC && !loadingC && <RegisterModal className="" />}
           </div>
@@ -200,13 +165,32 @@ export default function Home() {
               <RegisterModal className="mt-4" onComplete={refetchC} />
             </Alert>
           )}
-          <h1 className="text-3xl font-semibold">
-            {selectedView === "client"
-              ? "Browse Freelancers"
-              : "Browse Projects"}
-          </h1>
-          {selectedView === "worker" && <JobLists />}
-          {selectedView === "client" && <WorkerList />}
+          <div className="flex flex-row items-center gap-x-4 mb-12">
+            <h1 className="text-3xl font-semibold">Browse</h1>
+            <Tabs
+              defaultValue="projects"
+              onValueChange={(value) =>
+                setSelectedView(value as "projects" | "workers")
+              }
+            >
+              <TabsList className="py-6">
+                <TabsTrigger
+                  className="w-full text-xl font-semibold"
+                  value="projects"
+                >
+                  Projects
+                </TabsTrigger>
+                <TabsTrigger
+                  className="w-full text-xl font-semibold"
+                  value="workers"
+                >
+                  Freelancers
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
+          </div>
+          {selectedView === "projects" && <JobLists />}
+          {selectedView === "workers" && <WorkerList />}
         </div>
       </main>
     </>
