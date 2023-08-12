@@ -64,6 +64,7 @@ import { Checkbox } from "~/components/ui/checkbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { Label } from "~/components/ui/label";
 import WorkerList from "~/components/worker-list";
+import { cn } from "~/lib/utils";
 
 export default function Home() {
   const { open, close } = useWeb3Modal();
@@ -111,14 +112,14 @@ export default function Home() {
         <meta name="description" content="Decentralized Freelance Platform" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="flex min-h-screen flex-col items-center bg-[#050210] px-64 py-8">
+      <main className="flex min-h-screen flex-col items-center bg-[#050210] px-16 lg:px-64 py-8">
         <div className="flex w-full flex-row items-center justify-between">
-          <span className="text-4xl font-semibold text-gray-200">
+          <span className="text-transparent bg-gradient-to-r from-[#b429f9] to-[#26c5f3] bg-clip-text text-4xl font-semibold text-gray-200">
             decentralance
           </span>
           <div className="flex flex-row items-center justify-center gap-x-2">
             <Button
-              variant={address ? "outline" : "default"}
+              variant={address ? "fancyOutline" : "default"}
               onClick={() => open()}
             >
               {address ? (
@@ -153,7 +154,7 @@ export default function Home() {
             {!!address && !!dataC && !loadingC && selectedView === "client" && (
               <PostJobModal />
             )}
-            {!!address && !dataC && !loadingC && <RegisterModal />}
+            {!!address && !dataC && !loadingC && <RegisterModal className="" />}
           </div>
         </div>
         <Separator className="my-8" />
@@ -275,14 +276,7 @@ const PostJobModal = () => {
           <DialogTitle className="text-2xl">Post a new job</DialogTitle>
           {/* <DialogDescription>Post a new job</DialogDescription> */}
         </DialogHeader>
-        <Alert variant={"destructive"}>
-          <ExclamationTriangleIcon className="h-4 w-4" />
-          <AlertTitle className="text-white">Heads up!</AlertTitle>
-          <AlertDescription className="text-white">
-            You first need to register your account before you can post a job.
-          </AlertDescription>
-          <RegisterModal />
-        </Alert>
+
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
@@ -401,57 +395,6 @@ const RegisterModal = ({
     },
   });
 
-  let button = null;
-
-  if (isSuccess) {
-    button = (
-      <div className="flex w-1/2 flex-col items-end justify-end">
-        <Button variant={"fancy"} type="submit">
-          Stake 0.01 ETH
-        </Button>
-        <div className="ml-4">
-          {" "}
-          <a
-            href={`https://goerli.etherscan.io/tx/${data?.hash}`}
-            target="_blank"
-            className="text-pink-600 underline"
-          >
-            Transaction Successful
-          </a>
-        </div>
-      </div>
-    );
-  } else if (isLoading) {
-    button = (
-      <div className="flex w-1/2 flex-col items-end justify-end">
-        <Button type="submit" disabled>
-          Stake 0.01 ETH
-        </Button>
-
-        <div className="flex">
-          <div className="ml-4">Transaction in Progress...</div>
-        </div>
-      </div>
-    );
-  } else if (isError) {
-    button = (
-      <div className="flex w-1/2 flex-col items-end justify-end">
-        <Button type="submit">Stake 0.01 ETH</Button>
-
-        <div className="flex">
-          <div className="ml-4">{error?.name}</div>
-        </div>
-      </div>
-    );
-  } else {
-    button = (
-      <div className="flex w-1/2 flex-col items-end justify-end">
-        <Button type="submit">Stake 0.01 ETH</Button>
-        <div className="ml-4"> </div>
-      </div>
-    );
-  }
-
   function onSubmit(values: z.infer<typeof formSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
@@ -464,8 +407,8 @@ const RegisterModal = ({
 
   return (
     <Dialog>
-      <DialogTrigger>
-        <Button variant="outline" className=" mt-2 gap-x-1 text-white">
+      <DialogTrigger className={cn(className)}>
+        <Button variant="outline" className="gap-x-1 text-white">
           <span className="">Register</span>
           <ArrowRightIcon className="h-4 w-4" />
         </Button>
@@ -587,7 +530,33 @@ const RegisterModal = ({
                     </FormItem>
                   )}
                 />
-                {button}
+                <Button
+                  disabled={isLoading}
+                  variant="fancy"
+                  type="submit"
+                  className="w-full"
+                >
+                  {isLoading ? "Staking... 🚀" : "Stake 0.01 ETH"}
+                </Button>
+
+                {!!error && (
+                  <Alert variant={"destructive"}>
+                    <ExclamationTriangleIcon className="h-4 w-4" />
+                    <AlertTitle className="">Error</AlertTitle>
+                    <AlertDescription className="">
+                      {error?.name}
+                    </AlertDescription>
+                  </Alert>
+                )}
+                {isSuccess && (
+                  <a
+                    href={`https://goerli.etherscan.io/tx/${data?.hash}`}
+                    target="_blank"
+                    className="text-pink-600 underline"
+                  >
+                    Transaction Successful
+                  </a>
+                )}
               </form>
             </Form>
           </TabsContent>
@@ -610,7 +579,24 @@ const RegisterModal = ({
                     </FormItem>
                   )}
                 />
-                {button}
+                <Button
+                  disabled={isLoading}
+                  variant="fancy"
+                  type="submit"
+                  className="w-full"
+                >
+                  {isLoading ? "Staking... 🚀" : "Stake 0.01 ETH"}
+                </Button>
+                {!!error && <span className="text-red-500">{error?.name}</span>}
+                {isSuccess && (
+                  <a
+                    href={`https://goerli.etherscan.io/tx/${data?.hash}`}
+                    target="_blank"
+                    className="text-pink-600 underline"
+                  >
+                    Transaction Successful
+                  </a>
+                )}
               </form>
             </Form>
           </TabsContent>
