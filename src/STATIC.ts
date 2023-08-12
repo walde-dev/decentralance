@@ -2,8 +2,12 @@
 
 import { parseEther } from "viem";
 
-export const CONTRACT_ADDRESS = "0xe55865e5d12277070b0072545d5436f882aa9001"; //"0xab4B0AC5658a2dE35030a2c6E34Db803a5bEEab7";
-export const NETID = 5;
+export const CONTRACT_ADDRESS = "0xA8c35c669E80c6FeB9aD63417E51ecD9200E062F";
+// {
+//   5: "0xe55865e5d12277070b0072545d5436f882aa9001",
+//   1442": "0xA8c35c669E80c6FeB9aD63417E51ecD9200E062F",
+// }; //"0xab4B0AC5658a2dE35030a2c6E34Db803a5bEEab7";
+export const NETID = 1442;
 export const REG_FEE = parseEther("0.00000001");
 export const CONTRACT_ABI = [
   { inputs: [], stateMutability: "nonpayable", type: "constructor" },
