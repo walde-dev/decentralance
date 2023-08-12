@@ -438,7 +438,7 @@ const ProposalsModal = ({
 
   // console.log("RENDER FR", data, selectedFreelancer);
   const done =
-    selectedFreelancer &&
+    !!selectedFreelancer &&
     selectedFreelancer != "0x0000000000000000000000000000000000000000";
   console.log("done", done, isLoadingW, done);
   return (
