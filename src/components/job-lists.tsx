@@ -138,7 +138,7 @@ const JobLists = () => {
             ?.map((jobL, index) => {
               const listargs = jobL.result as unknown[];
               const job = {
-                title: listargs[1] as string, //"Video Editor - YouTube Channel",
+                title: listargs[5] as string, //"Video Editor - YouTube Channel",
                 company: "ViralVision Media",
                 location: "Remote",
                 type: "Freelance",
@@ -148,10 +148,9 @@ const JobLists = () => {
                 id: index,
                 isActive: listargs[3] as boolean,
                 acceptedFreelancer: listargs[4] as string,
-                description:
-                  "Edit engaging and creative videos for our YouTube channel. Proficiency in video editing software and storytelling skills are a must.",
+                description: listargs[1] as string,
               };
-              if (job.isActive != true) console.log("activeJob", job);
+              // if (job.isActive != true) console.log("activeJob", job);
               // console.log("acceptedJob", job);
               return job;
             })
@@ -550,7 +549,7 @@ const UserObject = ({ userAddress }: { userAddress: string }) => {
           >
             {
               //@ts-ignore
-              data[1]
+              data[2]
             }
           </a>
         </span>

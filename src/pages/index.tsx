@@ -94,7 +94,7 @@ export default function Home() {
     address: CONTRACT_ADDRESS,
     abi: wagmigotchiABI,
     chainId: NETID,
-    functionName: "checkStakedAmount",
+    functionName: "users",
     args: [address],
   });
 
@@ -102,6 +102,7 @@ export default function Home() {
     console.log("Welcome to stake!" + dataC?.toString());
   }, [dataC]);
 
+  const myData = dataC as unknown[];
   console.log("DATA", address, dataC, loadingC);
   return (
     <>
@@ -149,9 +150,15 @@ export default function Home() {
               </Button>
             )}
 
-            {!!address && !!dataC && !loadingC && <PostJobModal />}
+            {!!address &&
+              !!dataC &&
+              myData[0] != "0x0000000000000000000000000000000000000000" &&
+              !loadingC && <PostJobModal />}
 
-            {!!address && !dataC && !loadingC && <RegisterModal className="" />}
+            {!!address &&
+              (!dataC ||
+                myData[0] == "0x0000000000000000000000000000000000000000") &&
+              !loadingC && <RegisterModal className="" />}
           </div>
         </div>
         <Separator className="my-8" />
@@ -209,7 +216,7 @@ const PostJobModal = () => {
   const formSchema = z.object({
     title: z.string().min(2).max(50),
     description: z.string().min(2).max(500),
-    budget: z.number().min(0),
+    budget: z.coerce.number().min(0),
   });
   const { data, isLoading, isSuccess, write } = useContractWrite({
     address: CONTRACT_ADDRESS,
@@ -236,7 +243,11 @@ const PostJobModal = () => {
     // });
     // const sendStatus = await writeContract(request);
     write({
-      args: [values.description, parseEther(values.budget.toString())],
+      args: [
+        values.title,
+        values.description,
+        parseEther(values.budget.toString()),
+      ],
       value: parseEther(values.budget.toString()),
     });
     // console.log(values, sendStatus);
@@ -402,7 +413,7 @@ const RegisterModal = ({
     // ✅ This will be type-safe and validated.
     console.log("submit", values);
     write({
-      args: [values.name],
+      args: [values.name, true],
       value: REG_FEE,
     });
   }

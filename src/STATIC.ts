@@ -2,7 +2,7 @@
 
 import { parseEther } from "viem";
 
-export const CONTRACT_ADDRESS = "0xab4B0AC5658a2dE35030a2c6E34Db803a5bEEab7";
+export const CONTRACT_ADDRESS = "0xe55865e5d12277070b0072545d5436f882aa9001"; //"0xab4B0AC5658a2dE35030a2c6E34Db803a5bEEab7";
 export const NETID = 5;
 export const REG_FEE = parseEther("0.00000001");
 export const CONTRACT_ABI = [
@@ -15,13 +15,6 @@ export const CONTRACT_ABI = [
     name: "acceptProposal",
     outputs: [],
     stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [{ internalType: "address", name: "userAddress", type: "address" }],
-    name: "checkStakedAmount",
-    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
-    stateMutability: "view",
     type: "function",
   },
   {
@@ -57,6 +50,7 @@ export const CONTRACT_ABI = [
         name: "acceptedFreelancer",
         type: "address",
       },
+      { internalType: "string", name: "title", type: "string" },
     ],
     stateMutability: "view",
     type: "function",
@@ -77,6 +71,7 @@ export const CONTRACT_ABI = [
   },
   {
     inputs: [
+      { internalType: "string", name: "title", type: "string" },
       { internalType: "string", name: "description", type: "string" },
       { internalType: "uint256", name: "budget", type: "uint256" },
     ],
@@ -86,7 +81,10 @@ export const CONTRACT_ABI = [
     type: "function",
   },
   {
-    inputs: [{ internalType: "string", name: "profileData", type: "string" }],
+    inputs: [
+      { internalType: "string", name: "profileData", type: "string" },
+      { internalType: "bool", name: "isClient", type: "bool" },
+    ],
     name: "register",
     outputs: [],
     stateMutability: "payable",
@@ -132,6 +130,7 @@ export const CONTRACT_ABI = [
     name: "users",
     outputs: [
       { internalType: "address", name: "userAddress", type: "address" },
+      { internalType: "bool", name: "isClient", type: "bool" },
       { internalType: "string", name: "profileData", type: "string" },
       { internalType: "uint256", name: "stakedAmount", type: "uint256" },
       { internalType: "bool", name: "isRegistered", type: "bool" },
