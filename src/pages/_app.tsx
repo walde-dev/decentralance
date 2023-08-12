@@ -9,6 +9,7 @@ import { Web3Modal } from "@web3modal/react";
 import { configureChains, createConfig, WagmiConfig } from "wagmi";
 import { arbitrum, goerli, mainnet, polygon } from "wagmi/chains";
 import "~/styles/globals.css";
+import { Footer } from "~/components/footer";
 
 const MyApp: AppType = ({ Component, pageProps }) => {
   const chains = [arbitrum, mainnet, polygon, goerli];

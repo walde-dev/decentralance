@@ -77,6 +77,7 @@ import {
 import BgBubble from "~/components/bg-bubble";
 import Image from "next/image";
 import { Arrow } from "@radix-ui/react-select";
+import { Footer } from "~/components/footer";
 
 export default function Home() {
   const { open, close } = useWeb3Modal();
@@ -187,10 +188,10 @@ export default function Home() {
         </div>
         <Separator className="my-8" />
         {showLanding ? (
-          <div className="relative z-10 mt-24 flex w-full  flex-col">
+          <div className="relative z-10 mt-0 flex w-full flex-col  md:mt-24  md:pt-0">
             <Image
               alt="interview"
-              className="absolute right-0 -z-[1] opacity-70"
+              className="absolute right-0 -z-[1] hidden opacity-70 md:top-auto md:inline-block"
               src="/interview.svg"
               width={400}
               height={400}
@@ -206,18 +207,17 @@ export default function Home() {
               clients to interact.
               <br />
             </span>
-            <div className="mt-8 flex flex-col justify-center gap-y-2 md:max-w-sm">
+            <div className="mt-8 flex md:flex-row items-center md:gap-x-6 md:gap-y-0 flex-col gap-y-6 md:max-w-lg">
               <Button
                 variant={"fancy"}
-                className="gap-x-2 text-xl"
+                className="gap-x-2 text-xl w-full md:w-auto"
                 onClick={() => open()}
               >
                 Connect your Wallet
               </Button>
-              <span className="text-center text-sm text-gray-200">or</span>
               <Button
                 variant={"outline"}
-                className="gap-x-2 text-xl "
+                className="gap-x-2 text-xl w-full md:w-auto"
                 onClick={() => setShowLanding(false)}
               >
                 Browse Jobs <ArrowRightIcon className="h-4 w-4" />
@@ -275,6 +275,7 @@ export default function Home() {
         <BgBubble className="left-10 top-[600px]" />
         <BgBubble className="left-[200px] top-[600px]" />
         <BgBubble className="bottom-10 right-10 rounded-s-sm" />
+        <Footer />
       </main>
     </>
   );

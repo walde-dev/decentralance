@@ -20,7 +20,7 @@ const buttonVariants = cva(
         ghost:
           "hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50",
         link: "text-gray-900 underline-offset-4 hover:underline dark:text-gray-50",
-        fancy: "bg-gradient-to-tr from-[#b429f9] to-[#26c5f3] text-white",
+        fancy: "bg-gradient-to-tr from-[#b429f9] to-[#26c5f3] hover:opacity-90 text-white",
         fancyOutline:
           "border-[#b429f9] border dark:bg-gray-950 dark:hover:bg-gray-800 dark:hover:text-gray-50",
       },
