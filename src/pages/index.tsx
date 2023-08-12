@@ -112,7 +112,7 @@ export default function Home() {
         <meta name="description" content="Decentralized Freelance Platform" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="flex min-h-screen flex-col items-center bg-[#050210] px-64 py-8">
+      <main className="flex min-h-screen flex-col items-center bg-[#050210] px-16 lg:px-64 py-8">
         <div className="flex w-full flex-row items-center justify-between">
           <span className="text-transparent bg-gradient-to-r from-[#b429f9] to-[#26c5f3] bg-clip-text text-4xl font-semibold text-gray-200">
             decentralance
