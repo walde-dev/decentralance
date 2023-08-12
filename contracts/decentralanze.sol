@@ -26,6 +26,8 @@ contract FreelancePlatform {
         uint256 budget;
         bool isActive;
         address payable acceptedFreelancer;
+        string title;
+
     }
 
     struct Proposal {
@@ -53,7 +55,7 @@ contract FreelancePlatform {
         });
     }
     //add tittle
-    function postJob(string memory description, uint256 budget) external payable {
+    function postJob(string memory title, string memory description, uint256 budget) external payable {
         require(msg.value == budget, "Sent ETH does not match the job budget");
         require(users[msg.sender].stakedAmount >= registrationStake, "User not enough staked");
 
@@ -62,7 +64,8 @@ contract FreelancePlatform {
             description: description,
             budget: msg.value,
             isActive: true,
-            acceptedFreelancer: payable(address(0))
+            acceptedFreelancer: payable(address(0)),
+            title: title
         });
     }
 
