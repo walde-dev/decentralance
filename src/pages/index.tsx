@@ -120,8 +120,8 @@ export default function Home() {
         <meta name="description" content="Decentralized Freelance Platform" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="flex min-h-screen flex-col items-center bg-[#050210] px-16 py-8 lg:px-64">
-        <div className="flex w-full flex-row items-center justify-between">
+      <main className="flex min-h-screen flex-col items-center bg-[#050210] px-2 md:px-16 py-8 lg:px-64">
+        <div className="flex w-full md:flex-row flex-col gap-y-4 md:gap-y-0 items-center justify-between">
           <span className="text-4xl font-semibold text-gray-200">
             <span className="bg-gradient-to-r from-[#b429f9] to-[#26c5f3] bg-clip-text  text-transparent">
               decentral
@@ -129,7 +129,7 @@ export default function Home() {
             ance
           </span>
 
-          <div className="flex flex-row items-center justify-center gap-x-2">
+          <div className="flex md:flex-row items-center justify-center md:gap-x-2 md:gap-y-0 flex-col gap-y-2">
             {!!address && (
               <DropdownMenu>
                 <DropdownMenuTrigger>

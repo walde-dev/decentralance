@@ -245,8 +245,8 @@ const JobLists = () => {
 
   return (
     <div className="flex flex-col gap-y-4">
-      <div className="flex flex-row items-center justify-between">
-        <div className="w-full max-w-[300px]">
+      <div className="flex md:flex-row flex-col gap-y-4 md:gap-y-0 items-center justify-between">
+        <div className="w-full md:max-w-[300px]">
           <Input
             onChange={(e) => setSearchInput(e.target.value)}
             placeholder="Search jobs..."
