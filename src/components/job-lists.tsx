@@ -55,160 +55,6 @@ import {
   useContractRead,
 } from "wagmi";
 
-const mockJobs = [
-  {
-    title: "Frontend Developer for E-commerce Website",
-    company: "ShopifyTech",
-    location: "Remote",
-    type: "Full Time",
-    budget: 12,
-    minimumRating: 4.7,
-    description:
-      "Join our team to build and enhance the user interface of our cutting-edge e-commerce platform. Experience with React and CSS required.",
-  },
-  {
-    title: "Mobile App QA Engineer",
-    company: "TestSprint",
-    location: "Onsite (San Francisco, USA)",
-    type: "Contract",
-    budget: 6,
-    minimumRating: 4.2,
-    description:
-      "Looking for a detail-oriented QA Engineer to ensure the quality and functionality of our mobile app across various devices and platforms.",
-  },
-  {
-    title: "Data Scientist - Machine Learning",
-    company: "DataAlchemy",
-    location: "Remote",
-    type: "Full Time",
-    budget: 18,
-    minimumRating: 4.9,
-    description:
-      "Join our AI team to develop advanced machine learning models for data analysis. Strong background in Python and ML algorithms required.",
-  },
-  {
-    title: "Marketing Specialist for Tech Startup",
-    company: "InnovateTech",
-    location: "Remote",
-    type: "Part Time",
-    budget: 8,
-    minimumRating: 4.5,
-    description:
-      "Seeking a creative marketing specialist to develop and execute digital marketing campaigns, including social media and content creation.",
-  },
-  {
-    title: "Full Stack Developer - Fintech",
-    company: "CashFlow Systems",
-    location: "Onsite (New York City, USA)",
-    type: "Full Time",
-    budget: 15,
-    minimumRating: 4.8,
-    description:
-      "Join our fintech team to build and maintain features for our online financial platform. Proficiency in React and Node.js required.",
-  },
-  {
-    title: "Product Designer - Health and Wellness",
-    company: "VitalVibe",
-    location: "Remote",
-    type: "Full Time",
-    budget: 11,
-    minimumRating: 4.6,
-    description:
-      "Design user-centric interfaces for our health and wellness app, focusing on creating a seamless and engaging user experience.",
-  },
-  // Previous job listings...
-  {
-    title: "Content Writer - Travel Blog",
-    company: "Wanderlust Media",
-    location: "Remote",
-    type: "Freelance",
-    budget: 5,
-    minimumRating: 4.4,
-    description:
-      "Write captivating and informative travel articles for our blog. Passion for travel and excellent writing skills are a must.",
-  },
-  {
-    title: "DevOps Engineer - Cloud Infrastructure",
-    company: "CloudWare Solutions",
-    location: "Remote",
-    type: "Full Time",
-    budget: 16,
-    minimumRating: 4.7,
-    description:
-      "Manage and optimize our cloud infrastructure, ensuring high availability and scalability. Experience with AWS and Docker required.",
-  },
-  {
-    title: "Graphic Designer - Gaming Studio",
-    company: "PixelPlay Games",
-    location: "Onsite (Los Angeles, USA)",
-    type: "Full Time",
-    budget: 13,
-    minimumRating: 4.6,
-    description:
-      "Create visually stunning graphics for our video games, including character designs, concept art, and promotional materials.",
-  },
-  {
-    title: "Project Manager - Construction",
-    company: "BuildRight Inc.",
-    location: "Onsite (London, UK)",
-    type: "Full Time",
-    budget: 20,
-    minimumRating: 4.9,
-    description:
-      "Lead and coordinate construction projects from planning to completion. Strong organizational and leadership skills required.",
-  },
-  {
-    title: "Data Analyst - E-commerce Analytics",
-    company: "ShopInsight",
-    location: "Remote",
-    type: "Part Time",
-    budget: 9,
-    minimumRating: 4.3,
-    description:
-      "Analyze e-commerce data to provide insights on customer behavior, trends, and performance. Proficiency in SQL and data visualization tools required.",
-  },
-  {
-    title: "iOS App Developer - Social Networking",
-    company: "ConnectHub",
-    location: "Remote",
-    type: "Contract",
-    budget: 14,
-    minimumRating: 4.8,
-    description:
-      "Develop and maintain features for our social networking app on iOS. Swift programming skills and experience with app UI/UX required.",
-  },
-  {
-    title: "Cybersecurity Analyst",
-    company: "SecureNet Solutions",
-    location: "Onsite (Toronto, Canada)",
-    type: "Full Time",
-    budget: 17,
-    minimumRating: 4.7,
-    description:
-      "Protect our systems and networks from security breaches. Strong knowledge of cybersecurity practices and tools is essential.",
-  },
-  {
-    title: "HR Specialist - Talent Acquisition",
-    company: "TalentForge",
-    location: "Remote",
-    type: "Part Time",
-    budget: 8,
-    minimumRating: 4.5,
-    description:
-      "Assist in recruiting top talent for our company. Experience in candidate sourcing, interviews, and HR processes required.",
-  },
-  {
-    title: "Video Editor - YouTube Channel",
-    company: "ViralVision Media",
-    location: "Remote",
-    type: "Freelance",
-    budget: 6,
-    minimumRating: 4.2,
-    description:
-      "Edit engaging and creative videos for our YouTube channel. Proficiency in video editing software and storytelling skills are a must.",
-  },
-];
-
 // You can continue adding more job listings as needed.
 
 const wagmigotchiABI = CONTRACT_ABI;
@@ -222,6 +68,7 @@ const JobLists = () => {
   const [searchInput, setSearchInput] = useState("");
   const [remoteOnly, setRemoteOnly] = useState<CheckedState>(false);
   const [showMine, setShowMine] = useState<CheckedState>(false);
+  const [pastOnes, setPastOnes] = useState<CheckedState>(false);
 
   const { address } = useAccount();
   const { data, isLoading, fetchNextPage } = useContractInfiniteReads({
@@ -272,6 +119,15 @@ const JobLists = () => {
               Remote only
             </label>
           </div>
+          <div className="flex flex-row items-center gap-x-2">
+            <Checkbox id="pastOne" onCheckedChange={(e) => setPastOnes(e)} />
+            <label
+              htmlFor="pastOne"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              Show Completed
+            </label>
+          </div>
         </div>
       </div>
       <ul className="grid grid-cols-1 gap-4 xl:grid-cols-2">
@@ -288,10 +144,13 @@ const JobLists = () => {
                 minimumRating: 4.2,
                 owner: listargs[0] as string,
                 id: index,
+                isActive: listargs[3] as boolean,
                 acceptedFreelancer: listargs[4] as string,
                 description:
                   "Edit engaging and creative videos for our YouTube channel. Proficiency in video editing software and storytelling skills are a must.",
               };
+              if (job.isActive != true) console.log("activeJob", job);
+              // console.log("acceptedJob", job);
               return job;
             })
             .filter((job) => {
@@ -314,10 +173,16 @@ const JobLists = () => {
               return true;
             })
             .filter((job) => {
-              return job.budget > 0;
+              if (!pastOnes) {
+                return job.budget > 0;
+              } else {
+                return (
+                  job.owner !== "0x0000000000000000000000000000000000000000"
+                );
+              }
             })
             .map((job) => (
-              <li key={job.title + "-" + job.owner}>
+              <li key={job.title + "-" + job.owner + "-" + job.id}>
                 <Card className="flex min-h-[350px] flex-col justify-between">
                   <CardHeader>
                     <CardTitle>{job.title}</CardTitle>
@@ -343,14 +208,16 @@ const JobLists = () => {
                       <Wallet className="h-4 w-4" />{" "}
                       {(parseInt(job.budget) / 10 ** 18).toFixed(5)} ETH
                     </div>
-                    {address === job.owner ? (
-                      <ProposalsModal
-                        job={job}
-                        selectedFreelancer={job.acceptedFreelancer}
-                      />
-                    ) : (
-                      <ProposeModal job={job} />
-                    )}
+                    {job.isActive == false && <div>🚀 Completed 🚀</div>}
+                    {job.isActive &&
+                      (address === job.owner ? (
+                        <ProposalsModal
+                          job={job}
+                          selectedFreelancer={job.acceptedFreelancer}
+                        />
+                      ) : (
+                        <ProposeModal job={job} />
+                      ))}
                   </CardFooter>
                 </Card>
               </li>
@@ -547,11 +414,24 @@ const ProposalsModal = ({
     chainId: NETID,
   });
 
+  const {
+    data: dataA,
+    error: errorA,
+    isLoading: isLoadingA,
+    isSuccess: isSuccessA,
+    write: writeA,
+  } = useContractWrite({
+    address: CONTRACT_ADDRESS,
+    abi: wagmigotchiABI,
+    functionName: "releasePayment",
+    chainId: NETID,
+  });
+
   useEffect(() => {
     console.log("data", data);
   }, [data]);
 
-  console.log("RENDER FR", data, selectedFreelancer);
+  // console.log("RENDER FR", data, selectedFreelancer);
   const done =
     selectedFreelancer &&
     selectedFreelancer != "0x0000000000000000000000000000000000000000";
@@ -620,7 +500,15 @@ const ProposalsModal = ({
                         )}
                       </Button>
                       {done && selectedFreelancer == offer.user && (
-                        <Button>Payout</Button>
+                        <Button
+                          onClick={() => {
+                            writeA({
+                              args: [job?.id],
+                            });
+                          }}
+                        >
+                          Payout
+                        </Button>
                       )}
                     </CardFooter>
                   </Card>
