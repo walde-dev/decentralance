@@ -98,16 +98,23 @@ export default function Home() {
     args: [address],
   });
 
-  const isRegistered = useMemo(() => {
-    return !!dataC && !!address;
-  }, [dataC, address]);
-
   useEffect(() => {
     console.log("Welcome to stake!" + dataC?.toString());
   }, [dataC]);
 
   const myData = dataC as unknown[];
+
+  const isRegistered = useMemo(() => {
+    return (
+      !!address &&
+      !!dataC &&
+      myData[0] != "0x0000000000000000000000000000000000000000" &&
+      !loadingC
+    );
+  }, [address, dataC, myData, loadingC]);
+
   console.log("DATA", address, dataC, loadingC);
+  console.log("registered: ", isRegistered);
   return (
     <>
       <Head>
@@ -167,7 +174,7 @@ export default function Home() {
         </div>
         <Separator className="my-8" />
         <div className="z-10 flex h-full w-full flex-col  justify-center gap-y-4 ">
-          {isRegistered && (
+          {!isRegistered && (
             <Alert variant={"destructive"}>
               <ExclamationTriangleIcon className="h-4 w-4" />
               <AlertTitle className="text-white">Heads up!</AlertTitle>
@@ -436,192 +443,193 @@ export const RegisterModal = ({
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="text-2xl">Welcome 👋 </DialogTitle>
-          <DialogDescription>
-            In order to be able to post or apply for jobs, you need to stake
-            some ETH
-          </DialogDescription>
+          <DialogTitle className="text-2xl">
+            {isSuccess ? "Registration Successfull!" : "Welcome 👋"}{" "}
+          </DialogTitle>
+          {!isSuccess && (
+            <DialogDescription>
+              In order to be able to post or apply for jobs, you need to stake
+              some ETH
+            </DialogDescription>
+          )}
         </DialogHeader>
-        <Tabs
-          onValueChange={(value) =>
-            form.setValue("type", value as "worker" | "client")
-          }
-          defaultValue="worker"
-          className="w-full"
-        >
-          <Label className="mb-2">I am a</Label>
-          <TabsList className="w-full">
-            <TabsTrigger className="w-full" value="worker">
-              Freelancer
-            </TabsTrigger>
-            <TabsTrigger className="w-full" value="client">
-              Client
-            </TabsTrigger>
-          </TabsList>
-          <Separator className="my-4" />
-          <TabsContent value="worker">
-            <Form {...form}>
-              <form
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="mt-4 space-y-4"
-              >
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Your Name</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="description"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>About you</FormLabel>
-                      <FormControl>
-                        <Textarea {...field} />
-                      </FormControl>
-                      <FormMessage />
-                      <FormDescription>
-                        Tell us a bit about yourself
-                      </FormDescription>
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="workType"
-                  render={() => (
-                    <FormItem>
-                      <div className="mb-4">
-                        <FormLabel className="text-base">Your Skills</FormLabel>
+        {!isSuccess && (
+          <Tabs
+            onValueChange={(value) =>
+              form.setValue("type", value as "worker" | "client")
+            }
+            defaultValue="worker"
+            className="w-full"
+          >
+            <Label className="mb-2">I am a</Label>
+            <TabsList className="w-full">
+              <TabsTrigger className="w-full" value="worker">
+                Freelancer
+              </TabsTrigger>
+              <TabsTrigger className="w-full" value="client">
+                Client
+              </TabsTrigger>
+            </TabsList>
+            <Separator className="my-4" />
+            <TabsContent value="worker">
+              <Form {...form}>
+                <form
+                  onSubmit={form.handleSubmit(onSubmit)}
+                  className="mt-4 space-y-4"
+                >
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Your Name</FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="description"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>About you</FormLabel>
+                        <FormControl>
+                          <Textarea {...field} />
+                        </FormControl>
+                        <FormMessage />
                         <FormDescription>
-                          Select the skills you want to be hired for
+                          Tell us a bit about yourself
                         </FormDescription>
-                      </div>
-                      {items.map((item) => (
-                        <FormField
-                          key={item.id}
-                          control={form.control}
-                          name="workType"
-                          render={({ field }) => {
-                            return (
-                              <FormItem
-                                key={item.id}
-                                className="flex flex-row items-start space-x-3 space-y-0"
-                              >
-                                <FormControl>
-                                  <Checkbox
-                                    checked={field.value?.items.includes(
-                                      item.id
-                                    )}
-                                    onCheckedChange={(checked) => {
-                                      if (checked) {
-                                        field.onChange({
-                                          items: [
-                                            ...(field.value?.items ?? []),
-                                            item.id,
-                                          ],
-                                        });
-                                      } else {
-                                        field.onChange({
-                                          items: field.value?.items.filter(
-                                            (i) => i !== item.id
-                                          ),
-                                        });
-                                      }
-                                    }}
-                                  />
-                                </FormControl>
-                                <FormLabel className="text-sm font-normal">
-                                  {item.label}
-                                </FormLabel>
-                              </FormItem>
-                            );
-                          }}
-                        />
-                      ))}
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <Button
-                  disabled={isLoading}
-                  variant="fancy"
-                  type="submit"
-                  className="w-full"
-                >
-                  {isLoading ? "Staking... 🚀" : "Stake 0.01 ETH"}
-                </Button>
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="workType"
+                    render={() => (
+                      <FormItem>
+                        <div className="mb-4">
+                          <FormLabel className="text-base">
+                            Your Skills
+                          </FormLabel>
+                          <FormDescription>
+                            Select the skills you want to be hired for
+                          </FormDescription>
+                        </div>
+                        {items.map((item) => (
+                          <FormField
+                            key={item.id}
+                            control={form.control}
+                            name="workType"
+                            render={({ field }) => {
+                              return (
+                                <FormItem
+                                  key={item.id}
+                                  className="flex flex-row items-start space-x-3 space-y-0"
+                                >
+                                  <FormControl>
+                                    <Checkbox
+                                      checked={field.value?.items.includes(
+                                        item.id
+                                      )}
+                                      onCheckedChange={(checked) => {
+                                        if (checked) {
+                                          field.onChange({
+                                            items: [
+                                              ...(field.value?.items ?? []),
+                                              item.id,
+                                            ],
+                                          });
+                                        } else {
+                                          field.onChange({
+                                            items: field.value?.items.filter(
+                                              (i) => i !== item.id
+                                            ),
+                                          });
+                                        }
+                                      }}
+                                    />
+                                  </FormControl>
+                                  <FormLabel className="text-sm font-normal">
+                                    {item.label}
+                                  </FormLabel>
+                                </FormItem>
+                              );
+                            }}
+                          />
+                        ))}
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <Button
+                    disabled={isLoading}
+                    variant="fancy"
+                    type="submit"
+                    className="w-full"
+                  >
+                    {isLoading ? "Staking... 🚀" : "Stake 0.01 ETH"}
+                  </Button>
 
-                {!!error && (
-                  <Alert variant={"destructive"}>
-                    <ExclamationTriangleIcon className="h-4 w-4" />
-                    <AlertTitle className="">Error</AlertTitle>
-                    <AlertDescription className="">
-                      {error?.name}
-                    </AlertDescription>
-                  </Alert>
-                )}
-                {isSuccess && (
-                  <a
-                    href={`https://goerli.etherscan.io/tx/${data?.hash}`}
-                    target="_blank"
-                    className="text-pink-600 underline"
-                  >
-                    Transaction Successful
-                  </a>
-                )}
-              </form>
-            </Form>
-          </TabsContent>
-          <TabsContent value="client">
-            <Form {...form}>
-              <form
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="mt-4 space-y-4"
-              >
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Your Name/Company Name</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
+                  {!!error && (
+                    <Alert variant={"destructive"}>
+                      <ExclamationTriangleIcon className="h-4 w-4" />
+                      <AlertTitle className="">Error</AlertTitle>
+                      <AlertDescription className="">
+                        {error?.name}
+                      </AlertDescription>
+                    </Alert>
                   )}
-                />
-                <Button
-                  disabled={isLoading}
-                  variant="fancy"
-                  type="submit"
-                  className="w-full"
+                </form>
+              </Form>
+            </TabsContent>
+            <TabsContent value="client">
+              <Form {...form}>
+                <form
+                  onSubmit={form.handleSubmit(onSubmit)}
+                  className="mt-4 space-y-4"
                 >
-                  {isLoading ? "Staking... 🚀" : "Stake 0.01 ETH"}
-                </Button>
-                {!!error && <span className="text-red-500">{error?.name}</span>}
-                {isSuccess && (
-                  <a
-                    href={`https://goerli.etherscan.io/tx/${data?.hash}`}
-                    target="_blank"
-                    className="text-pink-600 underline"
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Your Name/Company Name</FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <Button
+                    disabled={isLoading}
+                    variant="fancy"
+                    type="submit"
+                    className="w-full"
                   >
-                    Transaction Successful
-                  </a>
-                )}
-              </form>
-            </Form>
-          </TabsContent>
-        </Tabs>
+                    {isLoading ? "Staking... 🚀" : "Stake 0.01 ETH"}
+                  </Button>
+                  {!!error && (
+                    <span className="text-red-500">{error?.name}</span>
+                  )}
+                </form>
+              </Form>
+            </TabsContent>
+          </Tabs>
+        )}
+        {isSuccess && (
+          <a
+            href={`https://goerli.etherscan.io/tx/${data?.hash}`}
+            target="_blank"
+            className="text-white hover:underline"
+          >
+            Transaction Successful
+          </a>
+        )}
       </DialogContent>
     </Dialog>
   );
