@@ -390,7 +390,7 @@ const RegisterModal = () => {
         <DialogHeader>
           <DialogTitle className="text-2xl">Welcome 👋 </DialogTitle>
           <DialogDescription>
-            In order to be able to apply for jobs, you need to stake some ETH
+            In order to be able to post or apply for jobs, you need to stake some ETH
           </DialogDescription>
         </DialogHeader>
         <Tabs
@@ -409,6 +409,7 @@ const RegisterModal = () => {
               Client
             </TabsTrigger>
           </TabsList>
+          <Separator className="my-4" />
           <TabsContent value="worker">
             <Form {...form}>
               <form
