@@ -1,7 +1,10 @@
 // import { goerli } from "wagmi/dist/chains";
 
+import { parseEther } from "viem";
+
 export const CONTRACT_ADDRESS = "0xab4B0AC5658a2dE35030a2c6E34Db803a5bEEab7";
 export const NETID = 5;
+export const REG_FEE = parseEther("0.00000001");
 export const CONTRACT_ABI = [
   { inputs: [], stateMutability: "nonpayable", type: "constructor" },
   {
