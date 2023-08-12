@@ -3,9 +3,11 @@ import { SewingPinFilledIcon, StarFilledIcon } from "@radix-ui/react-icons";
 import {
   ArrowRight,
   Building,
+  CheckIcon,
   Clock,
   LocateIcon,
   NavigationIcon,
+  User,
   Wallet,
 } from "lucide-react";
 import {
@@ -319,10 +321,7 @@ const JobLists = () => {
                       {(parseInt(job.budget) / 10 ** 18).toFixed(5)} ETH
                     </div>
                     {address === job.owner ? (
-                      <Button>
-                        Choose Proposal
-                        <ArrowRight className="h-4 w-4" />
-                      </Button>
+                      <ProposalsModal />
                     ) : (
                       <ProposeModal job={job} />
                     )}
@@ -438,6 +437,60 @@ const ProposeModal = ({
             )}
           </form>
         </Form>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+const ProposalsModal = () => {
+  const mockData = [
+    {
+      text: "I will do it for 0.01 ETH",
+      user: "Terry",
+    },
+    {
+      text: "I will do it for 0.02 ETH",
+      user: "Terry2",
+    },
+    {
+      text: "Please let me do it Please let me do it Please let me do it Please let me do it Please let me do it Please let me do it Please let me do it Please let me do it Please let me do it Please let me do it Please let me do it ",
+
+      user: "Terry3",
+    },
+  ];
+  return (
+    <Dialog>
+      <DialogTrigger>
+        <Button variant="outline">View Proposals</Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle className="text-2xl">Proposals</DialogTitle>
+          <DialogDescription>
+            Here you can see all proposals that were submitted for your posting
+          </DialogDescription>
+        </DialogHeader>
+        <Separator className="my-3" />
+        <ul className="flex max-h-[500px] flex-col items-center gap-y-4 overflow-y-scroll">
+          {mockData.map((offer) => {
+            return (
+              <li key={offer.user} className="w-full">
+                <Card className="flex flex-col justify-between">
+                  <CardHeader>
+                    <CardTitle>{offer.user}</CardTitle>
+                    <CardDescription>{offer.text}</CardDescription>
+                  </CardHeader>
+                  <CardContent className="flex flex-row items-center justify-between"></CardContent>
+                  <CardFooter className="flex flex-row items-center justify-end">
+                    <Button className="gap-x-2">
+                      <CheckIcon className="h-4 w-4" /> Accept
+                    </Button>
+                  </CardFooter>
+                </Card>
+              </li>
+            );
+          })}
+        </ul>
       </DialogContent>
     </Dialog>
   );
