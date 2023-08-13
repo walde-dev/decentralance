@@ -127,7 +127,7 @@ export default function Home() {
         <meta name="description" content="Decentralized Freelance Platform" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="relative flex min-h-screen flex-col items-center overflow-hidden bg-[#050210] px-2 py-8 md:px-16 lg:px-64">
+      <main className="dark relative flex min-h-screen flex-col items-center overflow-hidden bg-[#050210] px-2 py-8 md:px-16 lg:px-64">
         <div className="z-10 flex w-full flex-col items-center justify-between gap-y-4 md:flex-row md:gap-y-0">
           {/* <span className="text-4xl font-semibold text-gray-200">
             <span className="bg-gradient-to-r from-[#b429f9] to-[#26c5f3] bg-clip-text  text-transparent">

@@ -28,9 +28,7 @@ const MyApp: AppType = ({ Component, pageProps }) => {
   return (
     <>
       <WagmiConfig config={wagmiConfig}>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <Component {...pageProps} />
-        </ThemeProvider>
       </WagmiConfig>
       <Web3Modal projectId={projectId} ethereumClient={ethereumClient} />
     </>
