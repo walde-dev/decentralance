@@ -201,7 +201,7 @@ export default function Home() {
               <span className="text-[#b429f9]">Trustworthy</span> Freelance
               Services{" "}
             </h1>
-            <span className="mt-8 text-xl text-gray-200 md:max-w-lg">
+            <span className="mt-8 text-xl dark:text-gray-200 md:max-w-lg">
               A decentralized freelance platform built on the Polygon Network to
               provide a trustless and secure environment for freelancers and
               clients to interact.
